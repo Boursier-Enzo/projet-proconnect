@@ -8,10 +8,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: lamanu
       MYSQL_USER: lamanu
-      MYSQL_PASSWORD: lamanu  
+      MYSQL_PASSWORD: lamanu
     volumes:
       - ./mysql:/var/lib/mysql
-    restart: always
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -23,7 +22,6 @@ services:
       MYSQL_ROOT_PASSWORD: root
     depends_on:
       - mysql
-    restart: always
 
   # Add php-fpm + nginx
   php-fpm:
@@ -37,7 +35,6 @@ services:
       PHP_INI_SCAN_DIR: /usr/local/etc/php/conf.d
     volumes:
       - ./www:/var/www/html
-    restart: always
     depends_on:
       - mysql
 
@@ -49,4 +46,3 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./www:/var/www/html
-    restart: always
