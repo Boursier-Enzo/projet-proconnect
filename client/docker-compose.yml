@@ -1,0 +1,52 @@
+services:
+  mysql:
+    image: mysql:lts
+    container_name: mysql-lamanu
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lamanu
+      MYSQL_USER: lamanu
+      MYSQL_PASSWORD: lamanu  
+    volumes:
+      - ./mysql:/var/lib/mysql
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-lamanu
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: mysql-lamanu
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - mysql
+    restart: always
+
+  # Add php-fpm + nginx
+  php-fpm:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    container_name: php-fpm-lamanu
+    ports:
+      - 9000:9000
+    environment:
+      PHP_INI_SCAN_DIR: /usr/local/etc/php/conf.d
+    volumes:
+      - ./www:/var/www/html
+    restart: always
+    depends_on:
+      - mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-lamanu
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./www:/var/www/html
+    restart: always
