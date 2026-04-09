@@ -4,13 +4,14 @@ namespace App\Controller;
 
 use App\Entity\Document;
 use App\Form\DocumentType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\DocumentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
+#[IsGranted("IS_AUTHENTICATED_FULLY")]
 #[Route('/document')]
 final class DocumentController extends AbstractController
 {
@@ -71,7 +72,7 @@ final class DocumentController extends AbstractController
     #[Route('/{id}', name: 'app_document_delete', methods: ['POST'])]
     public function delete(Request $request, Document $document, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$document->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $document->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($document);
             $entityManager->flush();
         }
