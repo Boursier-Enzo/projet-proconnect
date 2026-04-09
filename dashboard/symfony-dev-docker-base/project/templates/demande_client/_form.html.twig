@@ -1,4 +1,49 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+    <div class="alert alert-danger shadow-sm border-0" style="display: {{ form.vars.errors|length > 0 ? 'block' : 'none' }};">
+        {{ form_errors(form) }}
+    </div>
+    <div class="row g-4">
+        <div class="col-md-12">
+            <label class="form-label fw-bold small text-uppercase" style="color: #6B4226; letter-spacing: 0.5px;">Objet de la prestation</label>
+            {{ form_widget(form.objet, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ex: Installation matériel réseau'}}) }}
+            {{ form_errors(form.objet) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold small text-uppercase" style="color: #6B4226;">Type de service</label>
+            {{ form_widget(form.typePrestation, {'attr': {'class': 'form-select'}}) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold small text-uppercase" style="color: #6B4226;">Statut initial</label>
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+        </div>
+
+        {# Section : Détails techniques #}
+        <div class="col-12">
+            <label class="form-label fw-bold small text-uppercase" style="color: #6B4226;">Description du besoin</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '5', 'placeholder': 'Précisez les détails de l\'intervention...'}}) }}
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label fw-bold small text-uppercase" style="color: #6B4226;">Créneau souhaité</label>
+            <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">📅</span>
+                {{ form_widget(form.creneauSouhaite, {'attr': {'class': 'form-control border-start-0'}}) }}
+            </div>
+            <div class="form-text">Veuillez choisir une date et une heure d'intervention.</div>
+        </div>
+    </div>
+
+    {# Actions du formulaire #}
+    <div class="mt-5 pt-4 border-top d-flex justify-content-end gap-2">
+        <a href="{{ path('app_demande_client_index') }}" class="btn btn-light px-4" style="font-weight: 600; color: #7A7875;">
+            Annuler
+        </a>
+        <button class="btn px-5 text-white" style="background-color: #A0722A; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(160, 114, 42, 0.2);">
+            {{ button_label|default('Enregistrer le dossier') }}
+        </button>
+    </div>
+{{ form_row(form._token) }}
+
+{{ form_end(form, {'render_rest': false}) }}

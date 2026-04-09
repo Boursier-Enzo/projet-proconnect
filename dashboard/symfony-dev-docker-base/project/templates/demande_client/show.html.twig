@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <th>CreneauSouhaite</th>
-                <td>{{ demande_client.creneauSouhaite }}</td>
+                <td>{{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y H:i') : 'Non défini' }}</td>
             </tr>
             <tr>
                 <th>Statut</th>
@@ -42,15 +42,14 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_demande_client_index') }}">back to list</a>
+    <a href="{{ path('app_demande_client_index') }}" class="back-link">Retour à la liste</a>
 
-    <a href="{{ path('app_demande_client_edit', {'id': demande_client.id}) }}">edit</a>
+    <a href="{{ path('app_demande_client_edit', {'id': demande_client.id}) }}">Modifier</a>
 
     <form method="post" action="{{ path('app_demande_client_accepter', {'id': demande_client.id}) }}" style="display:inline;">
-            <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande_client.id) }}">
-            <button type="submit">Accepter</button>
+        <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande_client.id) }}">
+        <button type="submit" class="btn-accept">Accepter</button>
     </form>
-    
 
     {{ include('demande_client/_delete_form.html.twig') }}
 {% endblock %}
