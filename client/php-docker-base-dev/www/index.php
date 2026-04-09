@@ -7,9 +7,14 @@
         <link rel="stylesheet" href="assets/css/styles.css" />
         <link rel="stylesheet" href="assets/css/auth.css" />
         <link rel="stylesheet" href="assets/css/dashboard.css" />
+        <link rel="stylesheet" href="assets/css/header.css" />
         <link rel="stylesheet" href="assets/css/footer.css" />
     </head>
     <body>
+
+        <!-- Header -->
+        <?php include "ui/header.php" ?>
+
         <!-- Auth -->
         <?php include "pages/auth.php" ?>
 

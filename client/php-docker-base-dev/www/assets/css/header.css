@@ -1,0 +1,28 @@
+header {
+    background-color: #3D2B1A;
+    display: flex;
+    flex-direction: row;
+    align-content: space-around;
+    padding: 10px;
+}
+
+header div:first-child {
+    display: flex;
+    flex-direction: row;
+    padding: 0 10px 0 0;
+}
+
+header div:first-child .titre h1 {
+    color: #F5ECD9;
+}
+
+header .list ul {
+    list-style-type: none; /* enlever les points de la liste */
+    display: flex;
+    flex-direction: row;
+}
+
+header .list ul li {
+    color: #B0A090;
+    padding: 0 10px;
+}
