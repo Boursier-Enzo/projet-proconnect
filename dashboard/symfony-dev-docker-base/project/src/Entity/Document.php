@@ -5,10 +5,16 @@ namespace App\Entity;
 use App\Repository\DocumentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 class Document
 {
+    public function __construct()
+    {
+        $this->uuid = Uuid::v4()->toRfc4122();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -38,10 +44,10 @@ class Document
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'documents')]
+    #[ORM\ManyToOne(inversedBy: "documents")]
     private ?Projet $projet = null;
 
-    #[ORM\ManyToOne(inversedBy: 'documents')]
+    #[ORM\ManyToOne(inversedBy: "documents")]
     private ?DemandeClient $demande = null;
 
     public function getId(): ?int
