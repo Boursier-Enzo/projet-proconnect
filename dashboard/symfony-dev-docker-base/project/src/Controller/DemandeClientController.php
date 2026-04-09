@@ -15,10 +15,28 @@ use Symfony\Component\Routing\Attribute\Route;
 final class DemandeClientController extends AbstractController
 {
     #[Route(name: 'app_demande_client_index', methods: ['GET'])]
-    public function index(DemandeClientRepository $demandeClientRepository): Response
+    public function index(DemandeClientRepository $demandeClientRepository, Request $request): Response
     {
+        $all = $demandeClientRepository->findAll();
+
+        $nbAcceptes    = count(array_filter($all, fn($d) => $d->getStatut() === 'accepte'));
+        $nbNonAcceptes = count(array_filter($all, fn($d) => $d->getStatut() !== 'accepte'));
+
+        $filtre = $request->query->get('statut');
+
+        if ($filtre === 'accepte') {
+            $demandes = array_values(array_filter($all, fn($d) => $d->getStatut() === 'accepte'));
+        } elseif ($filtre === 'non_accepte') {
+            $demandes = array_values(array_filter($all, fn($d) => $d->getStatut() !== 'accepte'));
+        } else {
+            $demandes = $all;
+        }
+
         return $this->render('demande_client/index.html.twig', [
-            'demande_clients' => $demandeClientRepository->findAll(),
+            'demande_clients'  => $demandes,
+            'nb_acceptes'      => $nbAcceptes,
+            'nb_non_acceptes'  => $nbNonAcceptes,
+            'filtre_actif'     => $filtre,
         ]);
     }
 
@@ -42,7 +60,7 @@ final class DemandeClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_demande_client_show', methods: ['GET'])]
+    #[Route('/{id}/show', name: 'app_demande_client_show', methods: ['GET'])]
     public function show(DemandeClient $demandeClient): Response
     {
         return $this->render('demande_client/show.html.twig', [
@@ -68,11 +86,22 @@ final class DemandeClientController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_demande_client_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_demande_client_delete', methods: ['POST'])]
     public function delete(Request $request, DemandeClient $demandeClient, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$demandeClient->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $demandeClient->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($demandeClient);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_demande_client_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/accepter', name: 'app_demande_client_accepter', methods: ['POST'])]
+    public function accepter(DemandeClient $demandeClient, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('accepter' . $demandeClient->getId(), $request->getPayload()->getString('_token'))) {
+            $demandeClient->setStatut('accepte');
             $entityManager->flush();
         }
 
