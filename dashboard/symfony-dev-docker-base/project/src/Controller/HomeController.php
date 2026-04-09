@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Repository\DemandeClientRepository;
+use App\Repository\UserRepository;
+use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -9,10 +12,23 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController extends AbstractController
 {
     #[Route('/home', name: 'app_home')]
-    public function index(): Response
-    {
+    public function index(
+        DemandeClientRepository $demandeRepo,
+        UserRepository $userRepo,
+        ProjetRepository $projetRepo
+    ): Response {
+        // Récupération des données pour le dashboard
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+            // Compteurs pour les badges d'information
+            'total_demandes' => $demandeRepo->count([]),
+            'total_clients' => $userRepo->count([]),
+            'total_projets' => $projetRepo->count([]),
+
+            // Liste des dernières demandes reçues via le Portail Client
+            'dernieres_demandes' => $demandeRepo->findBy([], ['id' => 'DESC'], 5),
+            
+            // Les projets/dossiers urgents 
+            'projets_recents' => $projetRepo->findBy([], ['id' => 'DESC'], 3),
         ]);
     }
 }
