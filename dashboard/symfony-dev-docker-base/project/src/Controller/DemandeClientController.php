@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\DemandeClient;
 use App\Form\DemandeClientType;
 use App\Repository\DemandeClientRepository;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[IsGranted("IS_AUTHENTICATED_FULLY")]
 #[Route('/demande/client')]
 final class DemandeClientController extends AbstractController
 {
