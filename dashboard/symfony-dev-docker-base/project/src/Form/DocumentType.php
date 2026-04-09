@@ -12,36 +12,36 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DocumentType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+    public function buildForm(
+        FormBuilderInterface $builder,
+        array $options,
+    ): void {
         $builder
-            ->add('uuid')
-            ->add('titre')
-            ->add('typeDocument')
-            ->add('fichierPath')
-            ->add('codeAcces')
-            ->add('contenu')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
+            ->add("titre")
+            ->add("typeDocument")
+            ->add("fichierPath")
+            ->add("codeAcces")
+            ->add("contenu")
+            ->add("createdAt", null, [
+                "widget" => "single_text",
             ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
+            ->add("updatedAt", null, [
+                "widget" => "single_text",
             ])
-            ->add('projet', EntityType::class, [
-                'class' => Projet::class,
-                'choice_label' => 'id',
+            ->add("projet", EntityType::class, [
+                "class" => Projet::class,
+                "choice_label" => "id",
             ])
-            ->add('demande', EntityType::class, [
-                'class' => DemandeClient::class,
-                'choice_label' => 'id',
-            ])
-        ;
+            ->add("demande", EntityType::class, [
+                "class" => DemandeClient::class,
+                "choice_label" => "id",
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Document::class,
+            "data_class" => Document::class,
         ]);
     }
 }

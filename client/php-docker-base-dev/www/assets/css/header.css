@@ -1,0 +1,48 @@
+header {
+    background-color: #3D2B1A;
+    display: flex;
+    padding: 10px;
+}
+
+header div:first-child {
+    display: flex;
+    flex-direction: row;
+    padding-right: 10px;
+}
+
+header div:first-child .titre h1, header .contact a{
+    color: #F5ECD9;
+}
+
+header .list {
+    align-content: center;
+    padding-left: 2em;
+}
+
+header .list ul {
+    list-style-type: none; /* enlever les points de la liste */
+    display: flex;
+    flex-direction: row;
+}
+
+header .list ul li {
+    color: #B0A090;
+    padding: 0 10px;
+}
+
+header .contact {
+    background-color: #A0722A;
+    border-radius: 8px;
+    align-content: center;
+    justify-content: end;
+    margin: 2% 0;
+    padding: 0 1%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+}
+
+header .contact a {
+    text-decoration: none; /* enlever le soulignage du lien */
+}
