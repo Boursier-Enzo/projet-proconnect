@@ -3,45 +3,91 @@
 {% block title %}DemandeClient index{% endblock %}
 
 {% block body %}
-    <h1>DemandeClient index</h1>
+<h1>DemandeClient index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Objet</th>
-                <th>Description</th>
-                <th>TypePrestation</th>
-                <th>CreneauSouhaite</th>
-                <th>Statut</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for demande_client in demande_clients %}
-            <tr>
-                <td>{{ demande_client.id }}</td>
-                <td>{{ demande_client.objet }}</td>
-                <td>{{ demande_client.description }}</td>
-                <td>{{ demande_client.typePrestation }}</td>
-                <td>{{ demande_client.creneauSouhaite }}</td>
-                <td>{{ demande_client.statut }}</td>
-                <td>{{ demande_client.createdAt ? demande_client.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ demande_client.updatedAt ? demande_client.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_demande_client_show', {'id': demande_client.id}) }}">show</a>
-                    <a href="{{ path('app_demande_client_edit', {'id': demande_client.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+{# ── Cartes stats cliquables ── #}
+<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
 
-    <a href="{{ path('app_demande_client_new') }}">Create new</a>
+    <a href="{{ path('app_demande_client_index', {'statut': 'accepte'}) }}"
+       style="text-decoration: none; flex: 1; padding: 1rem; border-radius: 8px;
+              background: {{ filtre_actif == 'accepte' ? '#198754' : '#d1e7dd' }};
+              color: {{ filtre_actif == 'accepte' ? '#fff' : '#0a3622' }};
+              text-align: center; border: 2px solid #198754;">
+        <div style="font-size: 2rem; font-weight: bold;">{{ nb_acceptes }}</div>
+        <div>Demandes acceptées</div>
+    </a>
+
+    <a href="{{ path('app_demande_client_index', {'statut': 'non_accepte'}) }}"
+       style="text-decoration: none; flex: 1; padding: 1rem; border-radius: 8px;
+              background: {{ filtre_actif == 'non_accepte' ? '#dc3545' : '#f8d7da' }};
+              color: {{ filtre_actif == 'non_accepte' ? '#fff' : '#58151c' }};
+              text-align: center; border: 2px solid #dc3545;">
+        <div style="font-size: 2rem; font-weight: bold;">{{ nb_non_acceptes }}</div>
+        <div>Demandes non acceptées</div>
+    </a>
+
+    {% if filtre_actif %}
+    <a href="{{ path('app_demande_client_index') }}"
+       style="text-decoration: none; padding: 1rem; border-radius: 8px;
+              background: #e2e3e5; color: #41464b; text-align: center;
+              border: 2px solid #adb5bd; align-self: center;">
+        ✕ Réinitialiser le filtre
+    </a>
+    {% endif %}
+
+</div>
+
+{# ── Tableau ── #}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Objet</th>
+            <th>Description</th>
+            <th>TypePrestation</th>
+            <th>CreneauSouhaite</th>
+            <th>Statut</th>
+            <th>CreatedAt</th>
+            <th>UpdatedAt</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for demande_client in demande_clients %}
+        <tr>
+            <td>{{ demande_client.id }}</td>
+            <td>{{ demande_client.objet }}</td>
+            <td>{{ demande_client.description }}</td>
+            <td>{{ demande_client.typePrestation }}</td>
+            <td>{{ demande_client.creneauSouhaite }}</td>
+            <td>
+                <span style="padding: 3px 8px; border-radius: 4px;
+                    background: {{ demande_client.statut == 'accepte' ? '#d1e7dd' : '#f8d7da' }};
+                    color: {{ demande_client.statut == 'accepte' ? '#0a3622' : '#58151c' }};">
+                    {{ demande_client.statut }}
+                </span>
+            </td>
+            <td>{{ demande_client.createdAt ? demande_client.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            <td>{{ demande_client.updatedAt ? demande_client.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            <td>
+                <a href="{{ path('app_demande_client_show', {'id': demande_client.id}) }}">Show</a>
+
+                <form method="post" action="{{ path('app_demande_client_accepter', {'id': demande_client.id}) }}" style="display:inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande_client.id) }}">
+                    <button type="submit">Accepter</button>
+                </form>
+
+                <form method="post" action="{{ path('app_demande_client_delete', {'id': demande_client.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ demande_client.id) }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="9">Aucun enregistrement trouvé</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
