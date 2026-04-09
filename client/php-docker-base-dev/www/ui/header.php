@@ -16,11 +16,14 @@
         </div>
         <div class="list">
             <ul>
-                <li id="selected">Acceuil</li>
+                <li>Acceuil</li>
                 <li>Services</li>
                 <li>Contact</li>
                 <li>Mon espace</li>
             </ul>
+        </div>
+        <div class="contact">
+            <a href="">Prendre contact</a>
         </div>
     </header>
 </body>
