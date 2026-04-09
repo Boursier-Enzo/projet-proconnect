@@ -12,8 +12,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[ORM\UniqueConstraint(name: "UNIQ_IDENTIFIER_EMAIL", fields: ["email"])]
+#[
+    UniqueEntity(
+        fields: ["email"],
+        message: "There is already an account with this email",
+    ),
+]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -66,19 +71,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Projet>
      */
-    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: 'architecte')]
+    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: "architecte")]
     private Collection $projets;
 
     /**
      * @var Collection<int, DemandeClient>
      */
-    #[ORM\OneToMany(targetEntity: DemandeClient::class, mappedBy: 'architecte')]
+    #[ORM\OneToMany(targetEntity: DemandeClient::class, mappedBy: "architecte")]
     private Collection $demandeClients;
 
     /**
      * @var Collection<int, Intervention>
      */
-    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'architecte')]
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: "architecte")]
     private Collection $interventions;
 
     #[ORM\Column]
@@ -86,6 +91,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
         $this->projets = new ArrayCollection();
         $this->demandeClients = new ArrayCollection();
         $this->interventions = new ArrayCollection();
@@ -125,7 +132,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = "ROLE_USER";
 
         return array_unique($roles);
     }
@@ -161,7 +168,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash(
+            "crc32c",
+            $this->password,
+        );
 
         return $data;
     }
