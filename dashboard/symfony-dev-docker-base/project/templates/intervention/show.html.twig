@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intervention{% endblock %}
+
+{% block body %}
+    <h1>Intervention</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ intervention.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ intervention.titre }}</td>
+            </tr>
+            <tr>
+                <th>CompteRendu</th>
+                <td>{{ intervention.compteRendu }}</td>
+            </tr>
+            <tr>
+                <th>DateIntervention</th>
+                <td>{{ intervention.dateIntervention ? intervention.dateIntervention|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ intervention.statut }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ intervention.createdAt ? intervention.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ intervention.updatedAt ? intervention.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_intervention_index') }}">back to list</a>
+
+    <a href="{{ path('app_intervention_edit', {'id': intervention.id}) }}">edit</a>
+
+    {{ include('intervention/_delete_form.html.twig') }}
+{% endblock %}
