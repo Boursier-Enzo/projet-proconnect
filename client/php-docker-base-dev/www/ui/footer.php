@@ -6,21 +6,12 @@
 </head>
 <body>
     <footer>
-        <div class="footer-logo">
-            <img src="" alt="Logo ProConnect">
+        <div class="">
+            <h2>ProConnect</h2>
+            <p>Solution de gestion professionnelle</p>
         </div>
-        <div class="footer-content">
-            <div class="footer-title">
-                <h2>ProConnect</h2>
-            </div>
-            <div class="footer-text">
-                <div class="conditions-utilisation">
-                    <div class="conditions-utilisation-title">
-                        <a href="../conditions-utilisation.php"><h3>Conditions d'utilisation</h3></a>
-                    </div>
-                </div>
-                <div class="">[Content 2]</div>
-            </div>
+        <div id="footer-copyright">
+            <p>© 2026 ProConnect</p>
         </div>
     </footer>
 </body>
