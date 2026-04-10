@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class InterventionType extends AbstractType
 {
@@ -18,19 +19,18 @@ class InterventionType extends AbstractType
             ->add('titre')
             ->add('compteRendu')
             ->add('dateIntervention')
-            ->add('statut')
-            ->add('createdAt', null, [
-                'widget' => 'single_text',
-            ])
-            ->add('updatedAt', null, [
-                'widget' => 'single_text',
+            ->add('statut', ChoiceType::class, [
+                'choices' => [
+                    'Planifiée'   => 'planifiee',
+                    'En cours'    => 'en_cours',
+                    'Terminée'    => 'terminee',
+                    'Annulée'     => 'annulee',
+                    'En attente'  => 'en_attente',
+                ],
+                'placeholder' => 'Sélectionner un statut',
             ])
             ->add('projet', EntityType::class, [
                 'class' => Projet::class,
-                'choice_label' => 'id',
-            ])
-            ->add('architecte', EntityType::class, [
-                'class' => User::class,
                 'choice_label' => 'id',
             ])
         ;

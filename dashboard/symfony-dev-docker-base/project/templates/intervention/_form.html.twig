@@ -1,4 +1,97 @@
+{% block stylesheets_extra %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<style>
+    .EasyMDEContainer .CodeMirror {
+        border-radius: 0 0 8px 8px;
+        border-color: #E0DDD8;
+        font-size: 14px;
+        min-height: 280px;
+        color: #3D2B1A;
+    }
+    .EasyMDEContainer .editor-toolbar {
+        border-color: #E0DDD8;
+        border-radius: 8px 8px 0 0;
+        background: #faf8f5;
+    }
+    .EasyMDEContainer .editor-toolbar button:hover,
+    .EasyMDEContainer .editor-toolbar button.active {
+        background: #E8D5B7;
+        border-color: #A0722A;
+    }
+    .editor-preview { background: #faf8f5; color: #3D2B1A; }
+</style>
+{% endblock %}
+
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+    {% if form.vars.errors|length > 0 %}
+    <div class="alert alert-danger border-0 mb-4" style="border-radius: 10px;">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <div class="col-md-8">
+            <label class="proconnect-label">Titre</label>
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Visite de chantier – Phase fondations'}}) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Statut</label>
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.statut) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="proconnect-label">Date d'intervention</label>
+            {{ form_widget(form.dateIntervention, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.dateIntervention) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="proconnect-label">Projet lié</label>
+            {{ form_widget(form.projet, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.projet) }}
+        </div>
+
+        <div class="col-12">
+            <label class="proconnect-label">Compte rendu
+                <span class="text-muted" style="font-weight: 400; text-transform: none; font-size: 11px;">— Markdown supporté</span>
+            </label>
+            {{ form_widget(form.compteRendu, {'attr': {'class': 'form-control', 'id': 'compteRendu', 'rows': '10', 'placeholder': 'Rédigez le compte rendu d\'intervention…'}}) }}
+            {{ form_errors(form.compteRendu) }}
+        </div>
+
+    </div>
+
+    <div class="mt-5 pt-4 border-top d-flex justify-content-end gap-2">
+        <a href="{{ path('app_intervention_index') }}" class="btn btn-light px-4" style="font-weight: 600; color: #7A7875;">
+            Annuler
+        </a>
+        <button type="submit" class="btn btn-proconnect px-5">
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+
 {{ form_end(form) }}
+
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+<script>
+    const easyMDE = new EasyMDE({
+        element: document.getElementById('compteRendu'),
+        spellChecker: false,
+        autosave: { enabled: true, uniqueId: 'intervention-rapport' },
+        placeholder: "Rédigez le compte rendu d'intervention…\n\n## Observations\n\n## Travaux effectués\n\n## Prochaines étapes",
+        toolbar: [
+            'bold', 'italic', 'heading', '|',
+            'unordered-list', 'ordered-list', '|',
+            'quote', 'code', 'horizontal-rule', '|',
+            'preview', 'side-by-side', 'fullscreen', '|',
+            'guide'
+        ],
+        status: ['lines', 'words'],
+        minHeight: '280px',
+    });
+</script>

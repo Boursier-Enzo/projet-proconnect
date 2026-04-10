@@ -1,45 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Intervention index{% endblock %}
+{% block title %}Rapports / Interventions – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Intervention index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titre</th>
-                <th>CompteRendu</th>
-                <th>DateIntervention</th>
-                <th>Statut</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for intervention in interventions %}
-            <tr>
-                <td>{{ intervention.id }}</td>
-                <td>{{ intervention.titre }}</td>
-                <td>{{ intervention.compteRendu }}</td>
-                <td>{{ intervention.dateIntervention ? intervention.dateIntervention|date('Y-m-d') : '' }}</td>
-                <td>{{ intervention.statut }}</td>
-                <td>{{ intervention.createdAt ? intervention.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ intervention.updatedAt ? intervention.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_intervention_show', {'id': intervention.id}) }}">show</a>
-                    <a href="{{ path('app_intervention_edit', {'id': intervention.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header">
+        <div>
+            <h1>📋 Rapports & Interventions</h1>
+            <p>Rédigez et consultez les comptes rendus d'intervention.</p>
+        </div>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+        <a href="{{ path('app_intervention_new') }}" class="btn btn-proconnect">
+            + Nouveau rapport
+        </a>
+        {% endif %}
+    </div>
 
-    <a href="{{ path('app_intervention_new') }}">Create new</a>
+    {# ── Barre de recherche ── #}
+    <div class="mb-4">
+        <input
+            type="text"
+            id="search-input"
+            class="proconnect-search"
+            placeholder="🔍  Rechercher (titre, statut, projet…)"
+            oninput="filterInterventions()"
+        >
+    </div>
+
+    {# ── Tableau ── #}
+    <div class="proconnect-card">
+        <div class="table-responsive">
+            <table class="table table-hover proconnect-table mb-0" id="interventions-table">
+                <thead>
+                    <tr>
+                        <th class="ps-4 py-3">Titre</th>
+                        <th class="py-3">Statut</th>
+                        <th class="py-3">Date d'intervention</th>
+                        <th class="py-3">Architecte</th>
+                        <th class="py-3">Projet</th>
+                        <th class="py-3 pe-4 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for intervention in interventions %}
+                    <tr class="intervention-row">
+                        <td class="ps-4 py-3">
+                            <div class="fw-bold" style="color: #3D2B1A;">{{ intervention.titre }}</div>
+                            {% if intervention.compteRendu %}
+                                <div class="text-muted" style="font-size: 12px;">{{ intervention.compteRendu|striptags|slice(0,70) }}{% if intervention.compteRendu|length > 70 %}…{% endif %}</div>
+                            {% else %}
+                                <div class="text-muted" style="font-size: 12px; font-style: italic;">Aucun compte rendu rédigé</div>
+                            {% endif %}
+                        </td>
+                        <td class="py-3">
+                            {% set s = intervention.statut|lower|replace({' ': '_'}) %}
+                            <span class="statut-badge statut-{{ s in ['en_cours','termine','en_attente','annule'] ? s : 'default' }}">
+                                {{ intervention.statut }}
+                            </span>
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 13px;">
+                            {{ intervention.dateIntervention ? intervention.dateIntervention|date('d/m/Y') : '—' }}
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 13px;">
+                            {{ intervention.architecte ? intervention.architecte.prenom ~ ' ' ~ intervention.architecte.nom : '—' }}
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 13px;">
+                            {{ intervention.projet ? intervention.projet.titre : '—' }}
+                        </td>
+                        <td class="pe-4 py-3 text-end">
+                            <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                <a href="{{ path('app_intervention_show', {'id': intervention.id}) }}" class="btn btn-sm btn-light">Voir</a>
+                                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+                                <a href="{{ path('app_intervention_edit', {'id': intervention.id}) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 0;">Modifier</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr id="empty-row">
+                        <td colspan="6" class="text-center py-5 text-muted">Aucun rapport trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function filterInterventions() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const rows  = document.querySelectorAll('.intervention-row');
+            let visible = 0;
+            rows.forEach(row => {
+                const match = row.textContent.toLowerCase().includes(query);
+                row.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            let emptyRow = document.getElementById('empty-search-row');
+            if (visible === 0 && rows.length > 0) {
+                if (!emptyRow) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'empty-search-row';
+                    tr.innerHTML = '<td colspan="6" class="text-center py-5 text-muted">Aucun résultat pour cette recherche.</td>';
+                    document.querySelector('#interventions-table tbody').appendChild(tr);
+                }
+            } else if (emptyRow) {
+                emptyRow.remove();
+            }
+        }
+    </script>
+
 {% endblock %}

@@ -1,11 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Intervention{% endblock %}
+{% block title %}Nouveau rapport – ProConnect{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <style>
+        .EasyMDEContainer .CodeMirror { border-radius: 0 0 8px 8px; border-color: #E0DDD8; font-size: 14px; min-height: 280px; color: #3D2B1A; }
+        .EasyMDEContainer .editor-toolbar { border-color: #E0DDD8; border-radius: 8px 8px 0 0; background: #faf8f5; }
+        .EasyMDEContainer .editor-toolbar button:hover, .EasyMDEContainer .editor-toolbar button.active { background: #E8D5B7; border-color: #A0722A; }
+        .editor-preview { background: #faf8f5; color: #3D2B1A; }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>Create new Intervention</h1>
 
-    {{ include('intervention/_form.html.twig') }}
+    <a href="{{ path('app_intervention_index') }}" class="back-link">← Retour aux rapports</a>
 
-    <a href="{{ path('app_intervention_index') }}">back to list</a>
+    <div class="proconnect-page-header">
+        <div>
+            <h1>✨ Nouveau rapport</h1>
+            <p>Rédigez un nouveau compte rendu d'intervention.</p>
+        </div>
+    </div>
+
+    <div class="proconnect-card p-4">
+        {{ include('intervention/_form.html.twig') }}
+    </div>
+
 {% endblock %}
