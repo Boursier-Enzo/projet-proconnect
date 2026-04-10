@@ -1,34 +1,84 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Log in!{% endblock %}
+{% block title %}Connexion – ProConnect{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
 
+    {# ── Déjà connecté ── #}
     {% if app.user %}
-        <div class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+        <div class="alert border-0 shadow-sm mb-4" style="border-radius: 10px; background: #fff3cd; color: #856404;">
+            Vous êtes connecté en tant que <strong>{{ app.user.userIdentifier }}</strong>.
+            <a href="{{ logout_path() }}" style="color: #A0722A; font-weight: 600; margin-left: 8px;">Se déconnecter</a>
         </div>
     {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail">Email</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
-    <label for="inputPassword">Password</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" name="_remember_me"> Remember me
-        </label>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header mb-4">
+        <div>
+            <h1>🔑 Connexion</h1>
+            <p>Accédez à votre espace ProConnect.</p>
+        </div>
     </div>
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        Sign in
-    </button>
-</form>
+    <div class="proconnect-card p-4" style="max-width: 480px;">
+
+        {# ── Erreur ── #}
+        {% if error %}
+            <div class="alert alert-danger border-0 mb-4" style="border-radius: 10px;">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            <div class="mb-3">
+                <label class="proconnect-label" for="inputEmail">Email</label>
+                <input
+                    type="email"
+                    value="{{ last_username }}"
+                    name="email"
+                    id="inputEmail"
+                    class="form-control proconnect-search"
+                    placeholder="jean.dupont@email.com"
+                    autocomplete="email"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="mb-3">
+                <label class="proconnect-label" for="inputPassword">Mot de passe</label>
+                <input
+                    type="password"
+                    name="password"
+                    id="inputPassword"
+                    class="form-control proconnect-search"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <div class="mb-4">
+                <div class="form-check" style="padding-left: 1.8rem;">
+                    <input type="checkbox" name="_remember_me" id="rememberMe" class="form-check-input" style="border-color: #A0722A;">
+                    <label class="form-check-label" for="rememberMe" style="font-size: 13px; color: #5a5550;">
+                        Se souvenir de moi
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                <a href="{{ path('app_register') }}" style="font-size: 13px; color: #A0722A; font-weight: 600; text-decoration: none;">
+                    Pas encore de compte ? S'inscrire →
+                </a>
+                <button type="submit" class="btn btn-proconnect px-5">
+                    Se connecter
+                </button>
+            </div>
+
+        </form>
+    </div>
+
 {% endblock %}

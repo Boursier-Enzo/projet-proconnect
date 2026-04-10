@@ -1,23 +1,87 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Créer un compte – ProConnect{% endblock %}
 
 {% block body %}
+
+    {# ── Flash errors ── #}
     {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        <div class="alert alert-danger border-0 shadow-sm" style="border-radius: 10px;">{{ flash_error }}</div>
     {% endfor %}
 
-    <h1>Register</h1>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header mb-4">
+        <div>
+            <h1>🔐 Créer un compte</h1>
+            <p>Rejoignez la plateforme ProConnect.</p>
+        </div>
+    </div>
 
-    {{ form_errors(registrationForm) }}
+    <div class="proconnect-card p-4" style="max-width: 600px;">
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+        {# Erreurs globales #}
+        {% if registrationForm.vars.errors|length > 0 %}
+        <div class="alert alert-danger border-0 mb-4" style="border-radius: 10px;">
+            {{ form_errors(registrationForm) }}
+        </div>
+        {% endif %}
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+        {{ form_start(registrationForm) }}
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <label class="proconnect-label">Nom</label>
+                {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Dupont'}}) }}
+                {{ form_errors(registrationForm.nom) }}
+            </div>
+
+            <div class="col-md-6">
+                <label class="proconnect-label">Prénom</label>
+                {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Jean'}}) }}
+                {{ form_errors(registrationForm.prenom) }}
+            </div>
+
+            <div class="col-12">
+                <label class="proconnect-label">Email</label>
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'jean.dupont@email.com'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="col-12">
+                <label class="proconnect-label">Numéro d'ordre <span class="text-muted" style="font-weight: 400; text-transform: none; font-size: 11px;">(architectes uniquement)</span></label>
+                {{ form_widget(registrationForm.numero_ordre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: A-12345'}}) }}
+                {{ form_errors(registrationForm.numero_ordre) }}
+            </div>
+
+            <div class="col-12">
+                <label class="proconnect-label">Mot de passe</label>
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': '6 caractères minimum'}}) }}
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+
+            <div class="col-12">
+                <div class="form-check" style="padding-left: 1.8rem;">
+                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input', 'style': 'border-color: #A0722A;'}}) }}
+                    <label class="form-check-label" style="font-size: 13px; color: #5a5550;">
+                        J'accepte les <a href="#" style="color: #A0722A; font-weight: 600;">conditions d'utilisation</a>
+                    </label>
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-4 pt-4 border-top d-flex justify-content-between align-items-center">
+            <a href="{{ path('app_login') }}" style="font-size: 13px; color: #A0722A; font-weight: 600; text-decoration: none;">
+                Déjà un compte ? Se connecter →
+            </a>
+            <button type="submit" class="btn btn-proconnect px-5">
+                Créer mon compte
+            </button>
+        </div>
+
+        {{ form_end(registrationForm) }}
+    </div>
+
 {% endblock %}
