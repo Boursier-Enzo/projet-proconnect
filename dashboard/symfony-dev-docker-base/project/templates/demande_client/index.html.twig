@@ -8,12 +8,12 @@
             <h1 style="color: #3D2B1A; font-weight: 800; font-size: 24px; margin: 0;">Registre des Demandes</h1>
             <p class="text-muted small">Consultez et validez les sollicitations clients.</p>
         </div>
-        <a href="{{ path('app_demande_client_new') }}" class="btn" style="background-color: #A0722A; color: white; font-weight: 600; border-radius: 8px;">
+        <a href="{{ path('app_demande_client_new') }}" class="btn btn-proconnect">
             + Nouvelle demande
         </a>
     </div>
 
-    {# ── Cartes stats cliquables stylisées ── #}
+    {# ── Cartes stats ── #}
     <div class="row g-3 mb-4">
         <div class="col-md-5">
             <a href="{{ path('app_demande_client_index', {'statut': 'accepte'}) }}"
@@ -46,13 +46,14 @@
         {% endif %}
     </div>
 
-    {# ── Tableau ProConnect ── #}
-    <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+    {# ── Tableau ── #}
+    <div class="proconnect-card">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead style="background-color: #F8F9FA;">
-                    <tr style="color: #7A7875; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+            <table class="table table-hover proconnect-table mb-0">
+                <thead>
+                    <tr>
                         <th class="ps-4 py-3">ID / Objet</th>
+                        <th class="py-3">Client</th>
                         <th class="py-3">Type</th>
                         <th class="py-3">Créneau</th>
                         <th class="py-3">Statut</th>
@@ -66,16 +67,28 @@
                             <span class="text-muted small">#{{ demande_client.id }}</span>
                             <div class="fw-bold" style="color: #3D2B1A;">{{ demande_client.objet }}</div>
                         </td>
-                        <td class="py-3 text-muted" style="font-size: 14px;">{{ demande_client.typePrestation }}</td>
-                        <td>{{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y H:i') : '' }}</td>
                         <td class="py-3">
-                            <span class="badge" style="background-color: {{ demande_client.statut == 'accepte' ? '#d1e7dd' : '#f8d7da' }}; color: {{ demande_client.statut == 'accepte' ? '#0a3622' : '#58151c' }}; font-weight: 600;">
-                                {{ demande_client.statut|upper }}
+                            {% if demande_client.client %}
+                                <div class="fw-bold" style="color: #3D2B1A; font-size: 13px;">
+                                    {{ demande_client.client.prenom }} {{ demande_client.client.nom }}
+                                </div>
+                                <div class="text-muted" style="font-size: 12px;">{{ demande_client.client.email }}</div>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 14px;">{{ demande_client.typePrestation ?? '—' }}</td>
+                        <td class="py-3 text-muted" style="font-size: 13px;">
+                            {{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y H:i') : '—' }}
+                        </td>
+                        <td class="py-3">
+                            <span class="statut-badge {{ demande_client.statut == 'accepte' ? 'statut-termine' : 'statut-annule' }}">
+                                {{ demande_client.statut == 'accepte' ? '✓ Acceptée' : '✗ Non acceptée' }}
                             </span>
                         </td>
                         <td class="pe-4 py-3 text-end">
                             <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
-                                <a href="{{ path('app_demande_client_show', {'id': demande_client.id}) }}" class="btn btn-sm btn-light" title="Voir">Voir</a>
+                                <a href="{{ path('app_demande_client_show', {'id': demande_client.id}) }}" class="btn btn-sm btn-light">Voir</a>
 
                                 {% if demande_client.statut != 'accepte' %}
                                 <form method="post" action="{{ path('app_demande_client_accepter', {'id': demande_client.id}) }}" style="display:inline;">
@@ -93,7 +106,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">Aucune demande trouvée.</td>
+                        <td colspan="6" class="text-center py-5 text-muted">Aucune demande trouvée.</td>
                     </tr>
                 {% endfor %}
                 </tbody>

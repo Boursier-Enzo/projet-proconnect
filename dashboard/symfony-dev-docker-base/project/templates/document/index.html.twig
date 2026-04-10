@@ -1,49 +1,119 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Document index{% endblock %}
+{% block title %}Documents – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Document index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Uuid</th>
-                <th>Titre</th>
-                <th>TypeDocument</th>
-                <th>FichierPath</th>
-                <th>CodeAcces</th>
-                <th>Contenu</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for document in documents %}
-            <tr>
-                <td>{{ document.id }}</td>
-                <td>{{ document.uuid }}</td>
-                <td>{{ document.titre }}</td>
-                <td>{{ document.typeDocument }}</td>
-                <td>{{ document.fichierPath }}</td>
-                <td>{{ document.codeAcces }}</td>
-                <td>{{ document.contenu }}</td>
-                <td>{{ document.createdAt ? document.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ document.updatedAt ? document.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_document_show', {'id': document.id}) }}">show</a>
-                    <a href="{{ path('app_document_edit', {'id': document.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header">
+        <div>
+            <h1>📄 Documents</h1>
+            <p>Gérez l'ensemble des documents de la plateforme.</p>
+        </div>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+        <a href="{{ path('app_document_new') }}" class="btn btn-proconnect">
+            + Nouveau document
+        </a>
+        {% endif %}
+    </div>
 
-    <a href="{{ path('app_document_new') }}">Create new</a>
+    {# ── Barre de recherche ── #}
+    <div class="mb-4">
+        <input
+            type="text"
+            id="search-input"
+            class="proconnect-search"
+            placeholder="🔍  Rechercher un document (titre, type…)"
+            oninput="filterDocuments()"
+        >
+    </div>
+
+    {# ── Tableau ── #}
+    <div class="proconnect-card">
+        <div class="table-responsive">
+            <table class="table table-hover proconnect-table mb-0" id="documents-table">
+                <thead>
+                    <tr>
+                        <th class="ps-4 py-3">Titre</th>
+                        <th class="py-3">Type</th>
+                        <th class="py-3">Code d'accès</th>
+                        <th class="py-3">Fichier</th>
+                        <th class="py-3">Créé le</th>
+                        <th class="py-3 pe-4 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for document in documents %}
+                    <tr class="document-row">
+                        <td class="ps-4 py-3">
+                            <div class="fw-bold" style="color: #3D2B1A;">{{ document.titre }}</div>
+                            {% if document.contenu %}
+                                <div class="text-muted" style="font-size: 12px;">{{ document.contenu|slice(0,60) }}{% if document.contenu|length > 60 %}…{% endif %}</div>
+                            {% endif %}
+                        </td>
+                        <td class="py-3">
+                            {% if document.typeDocument %}
+                                <span class="statut-badge statut-default">{{ document.typeDocument }}</span>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 13px; font-family: monospace;">
+                            {{ document.codeAcces ?? '—' }}
+                        </td>
+                        <td class="py-3">
+                            {% if document.fichierPath %}
+                                <a href="{{ asset(document.fichierPath) }}" target="_blank" class="btn btn-sm btn-light" style="font-size: 12px;">
+                                    📎 Voir
+                                </a>
+                            {% else %}
+                                <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-muted" style="font-size: 13px;">
+                            {{ document.createdAt ? document.createdAt|date('d/m/Y') : '—' }}
+                        </td>
+                        <td class="pe-4 py-3 text-end">
+                            <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                <a href="{{ path('app_document_show', {'id': document.id}) }}" class="btn btn-sm btn-light">Voir</a>
+                                {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+                                <a href="{{ path('app_document_edit', {'id': document.id}) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 0;">Modifier</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr id="empty-row">
+                        <td colspan="6" class="text-center py-5 text-muted">Aucun document trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function filterDocuments() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const rows  = document.querySelectorAll('.document-row');
+            let visible = 0;
+            rows.forEach(row => {
+                const match = row.textContent.toLowerCase().includes(query);
+                row.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            let emptyRow = document.getElementById('empty-search-row');
+            if (visible === 0 && rows.length > 0) {
+                if (!emptyRow) {
+                    const tr = document.createElement('tr');
+                    tr.id = 'empty-search-row';
+                    tr.innerHTML = '<td colspan="6" class="text-center py-5 text-muted">Aucun résultat pour cette recherche.</td>';
+                    document.querySelector('#documents-table tbody').appendChild(tr);
+                }
+            } else if (emptyRow) {
+                emptyRow.remove();
+            }
+        }
+    </script>
+
 {% endblock %}

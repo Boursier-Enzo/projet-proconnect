@@ -54,7 +54,7 @@
                         <tbody>
                         {% set has_client = false %}
                         {% for user in users %}
-                            {% if 'ROLE_USER' in user.roles and 'ROLE_ARCHITECTE' not in user.roles and 'ROLE_ADMIN' not in user.roles %}
+                            {% if 'ROLE_CLIENT' in user.roles and 'ROLE_ARCHITECTE' not in user.roles and 'ROLE_ADMIN' not in user.roles %}
                                 {% set has_client = true %}
                                 <tr class="user-row">
                                     <td class="ps-4 py-3">

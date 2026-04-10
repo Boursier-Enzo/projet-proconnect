@@ -1,11 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Document{% endblock %}
+{% block title %}Nouveau document – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Create new Document</h1>
 
-    {{ include('document/_form.html.twig') }}
+    <a href="{{ path('app_document_index') }}" class="back-link">← Retour aux documents</a>
 
-    <a href="{{ path('app_document_index') }}">back to list</a>
+    <div class="proconnect-page-header">
+        <div>
+            <h1>✨ Nouveau document</h1>
+            <p>Ajoutez un nouveau document à la plateforme.</p>
+        </div>
+    </div>
+
+    <div class="proconnect-card p-4">
+        {{ include('document/_form.html.twig') }}
+    </div>
+
 {% endblock %}

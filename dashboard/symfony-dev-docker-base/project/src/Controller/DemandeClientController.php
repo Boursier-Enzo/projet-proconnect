@@ -35,10 +35,10 @@ final class DemandeClientController extends AbstractController
         }
 
         return $this->render('demande_client/index.html.twig', [
-            'demande_clients'  => $demandes,
-            'nb_acceptes'      => $nbAcceptes,
-            'nb_non_acceptes'  => $nbNonAcceptes,
-            'filtre_actif'     => $filtre,
+            'demande_clients' => $demandes,
+            'nb_acceptes'     => $nbAcceptes,
+            'nb_non_acceptes' => $nbNonAcceptes,
+            'filtre_actif'    => $filtre,
         ]);
     }
 
@@ -50,6 +50,7 @@ final class DemandeClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $demandeClient->setClient($this->getUser()); // 👈 associe le client connecté
             $entityManager->persist($demandeClient);
             $entityManager->flush();
 
@@ -58,7 +59,7 @@ final class DemandeClientController extends AbstractController
 
         return $this->render('demande_client/new.html.twig', [
             'demande_client' => $demandeClient,
-            'form' => $form,
+            'form'           => $form,
         ]);
     }
 
@@ -84,7 +85,7 @@ final class DemandeClientController extends AbstractController
 
         return $this->render('demande_client/edit.html.twig', [
             'demande_client' => $demandeClient,
-            'form' => $form,
+            'form'           => $form,
         ]);
     }
 

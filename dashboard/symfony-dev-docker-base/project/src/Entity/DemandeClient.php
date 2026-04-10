@@ -40,6 +40,9 @@ class DemandeClient
     #[ORM\ManyToOne(inversedBy: 'demandeClients')]
     private ?User $architecte = null;
 
+    #[ORM\ManyToOne(inversedBy: 'demandesEnvoyees')]
+    private ?User $client = null;
+
     /**
      * @var Collection<int, Document>
      */
@@ -49,12 +52,9 @@ class DemandeClient
     public function __construct()
     {
         $this->documents = new ArrayCollection();
-        
-        // Initialisation des dates de création et de mise à jour
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
-        
-        // Définir un statut par défaut si aucun n'est fourni
+
         if ($this->statut === null) {
             $this->statut = 'non_accepte';
         }
@@ -73,7 +73,6 @@ class DemandeClient
     public function setObjet(string $objet): static
     {
         $this->objet = $objet;
-
         return $this;
     }
 
@@ -85,7 +84,6 @@ class DemandeClient
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -97,7 +95,6 @@ class DemandeClient
     public function setTypePrestation(?string $typePrestation): static
     {
         $this->typePrestation = $typePrestation;
-
         return $this;
     }
 
@@ -120,7 +117,6 @@ class DemandeClient
     public function setStatut(string $statut): static
     {
         $this->statut = $statut;
-
         return $this;
     }
 
@@ -132,7 +128,6 @@ class DemandeClient
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -144,7 +139,6 @@ class DemandeClient
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
@@ -156,7 +150,17 @@ class DemandeClient
     public function setArchitecte(?User $architecte): static
     {
         $this->architecte = $architecte;
+        return $this;
+    }
 
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    public function setClient(?User $client): static
+    {
+        $this->client = $client;
         return $this;
     }
 
@@ -174,19 +178,16 @@ class DemandeClient
             $this->documents->add($document);
             $document->setDemande($this);
         }
-
         return $this;
     }
 
     public function removeDocument(Document $document): static
     {
         if ($this->documents->removeElement($document)) {
-            // set the owning side to null (unless already changed)
             if ($document->getDemande() === $this) {
                 $document->setDemande(null);
             }
         }
-
         return $this;
     }
 }

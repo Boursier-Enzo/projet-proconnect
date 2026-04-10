@@ -1,4 +1,52 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+    {% if form.vars.errors|length > 0 %}
+    <div class="alert alert-danger border-0 mb-4" style="border-radius: 10px;">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <div class="col-md-8">
+            <label class="proconnect-label">Titre</label>
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Permis de construire'}}) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Type de document</label>
+            {{ form_widget(form.typeDocument, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.typeDocument) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="proconnect-label">Fichier</label>
+            {{ form_widget(form.fichierPath, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.fichierPath) }}
+        </div>
+
+        <div class="col-md-6">
+            <label class="proconnect-label">Code d'accès</label>
+            {{ form_widget(form.codeAcces, {'attr': {'class': 'form-control', 'placeholder': 'Ex: DOC-2024-001'}}) }}
+            {{ form_errors(form.codeAcces) }}
+        </div>
+
+        <div class="col-12">
+            <label class="proconnect-label">Contenu / Notes</label>
+            {{ form_widget(form.contenu, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Description ou notes sur ce document…'}}) }}
+            {{ form_errors(form.contenu) }}
+        </div>
+
+    </div>
+
+    <div class="mt-5 pt-4 border-top d-flex justify-content-end gap-2">
+        <a href="{{ path('app_document_index') }}" class="btn btn-light px-4" style="font-weight: 600; color: #7A7875;">
+            Annuler
+        </a>
+        <button type="submit" class="btn btn-proconnect px-5">
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+
 {{ form_end(form) }}
