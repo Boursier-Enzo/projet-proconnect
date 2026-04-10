@@ -14,14 +14,9 @@
 
         <!-- Header -->
         <?php include "ui/header.php" ?>
-
-        <!-- Auth -->
-        <?php include "pages/auth.php" ?>
-
-        <!-- Dashboard -->
-        <?php include "pages/dashboard.php" ?>
         
-
+        <!-- FOrmulaire de contact -->
+         <?php include "ui/contactForm.php" ?>
         <!-- Footer -->
         <?php include "ui/footer.php" ?>
 
