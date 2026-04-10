@@ -13,6 +13,8 @@ class Document
     public function __construct()
     {
         $this->uuid = Uuid::v4()->toRfc4122();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     #[ORM\Id]
