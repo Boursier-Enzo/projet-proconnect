@@ -3,65 +3,72 @@
 {% block title %}Accueil - Dashboard ProConnect{% endblock %}
 
 {% block body %}
-    <div class="header-section mb-5">
-        <h1>Bonjour, Admin Métier</h1>
-        <p>Voici un résumé de l'activité.</p>
-    </div>
+<div class="header-section mb-5">
+    <h1>Bonjour,
+        {% if is_granted('ROLE_ADMIN') %}Admin
+        {% elseif is_granted('ROLE_ARCHITECTE') %}Architecte
+        {% endif %}
+        {{ app.user.prenom }} {{ app.user.nom }} 👋
+    </h1>
+    <p>Voici un résumé de l'activité.</p>
+</div>
 
-    {# Les indicateurs clés #}
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="kpi-card kpi-card--cream">
-                <span class="kpi-label">Demandes Portal</span>
-                <h2 class="kpi-value">{{ total_demandes }}</h2>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="kpi-card kpi-card--gold">
-                <span class="kpi-label">Total Clients</span>
-                <h2 class="kpi-value">{{ total_clients }}</h2>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="kpi-card kpi-card--dark">
-                <span class="kpi-label">Dossiers Actifs</span>
-                <h2 class="kpi-value">{{ total_projets }}</h2>
-            </div>
+{# Les indicateurs clés #}
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="kpi-card kpi-card--cream">
+            <span class="kpi-label">Demandes Portal</span>
+            <h2 class="kpi-value">{{ total_demandes }}</h2>
         </div>
     </div>
-
-    {# Tableau des dernières demandes #}
-    <div class="dash-table-wrap">
-        <div class="dash-table-header">
-            <h3>Dernières demandes clients</h3>
-            <a href="{{ path('app_demande_client_index') }}" class="btn-see-all">Voir tout le registre →</a>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table dash-table">
-                <thead>
-                    <tr>
-                        <th class="pb-3">Client</th>
-                        <th class="pb-3">Objet</th>
-                        <th class="pb-3">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for demande in dernieres_demandes %}
-                    <tr>
-                        <td class="py-3"><strong>{{ demande.architecte ? demande.architecte.email : 'Client ProConnect' }}</strong></td>
-                        <td class="py-3 text-muted">{{ demande.objet }}</td>
-                        <td class="py-3">
-                            <a href="{{ path('app_demande_client_show', {'id': demande.id}) }}" class="btn-details">Détails</a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="3" class="table-empty">Aucune demande reçue via la base MySQL.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-card--gold">
+            <span class="kpi-label">Total Clients</span>
+            <h2 class="kpi-value">{{ total_clients }}</h2>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-card--dark">
+            <span class="kpi-label">Dossiers Actifs</span>
+            <h2 class="kpi-value">{{ total_projets }}</h2>
+        </div>
+    </div>
+</div>
+
+{# Tableau des dernières demandes #}
+<div class="dash-table-wrap">
+    <div class="dash-table-header">
+        <h3>Dernières demandes clients</h3>
+        <a href="{{ path('app_demande_client_index') }}" class="btn-see-all">Voir tout le registre →</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table dash-table">
+            <thead>
+                <tr>
+                    <th class="pb-3">Client</th>
+                    <th class="pb-3">Objet</th>
+                    <th class="pb-3">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for demande in dernieres_demandes %}
+                <tr>
+                    <td class="py-3"><strong>{{ demande.architecte ? demande.architecte.email : 'Client ProConnect'
+                            }}</strong></td>
+                    <td class="py-3 text-muted">{{ demande.objet }}</td>
+                    <td class="py-3">
+                        <a href="{{ path('app_demande_client_show', {'id': demande.id}) }}"
+                            class="btn-details">Détails</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="table-empty">Aucune demande reçue via la base MySQL.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

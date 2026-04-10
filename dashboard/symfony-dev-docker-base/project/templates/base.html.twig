@@ -67,13 +67,23 @@
             </a>
 
             <a href="#" class="nav-link-custom">Messages</a>
-            <a href="#" class="nav-link-custom">Paramètres</a>
+            <a href="{{ path('app_profile') }}"
+                class="nav-link-custom {{ app.request.attributes.get('_route') starts with 'app_profile' ? 'active' : '' }}">
+                Paramètres
+            </a>
         </div>
     </nav>
 
     <div class="main-wrapper">
         <div class="top">
-            <span>Connecté en tant que : <strong>Professionnel</strong></span>
+            <span>Connecté en tant que :
+                <strong>
+                    {% if is_granted('ROLE_ADMIN') %}Administrateur
+                    {% elseif is_granted('ROLE_ARCHITECTE') %}Architecte
+                    {% else %}Professionnel
+                    {% endif %}
+                </strong>
+            </span>
         </div>
 
         <div class="content-area">

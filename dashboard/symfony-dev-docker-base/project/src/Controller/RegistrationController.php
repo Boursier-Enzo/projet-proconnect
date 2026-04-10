@@ -37,6 +37,8 @@ class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get("plainPassword")->getData();
 
+            $user->setRoles(['ROLE_ARCHITECTE']);
+            
             // hash du mot de passe
             $user->setPassword(
                 $userPasswordHasher->hashPassword($user, $plainPassword),
