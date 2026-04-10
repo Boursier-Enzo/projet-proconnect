@@ -21,21 +21,7 @@ class DocumentType extends AbstractType
             ->add("typeDocument")
             ->add("fichierPath")
             ->add("codeAcces")
-            ->add("contenu")
-            ->add("createdAt", null, [
-                "widget" => "single_text",
-            ])
-            ->add("updatedAt", null, [
-                "widget" => "single_text",
-            ])
-            ->add("projet", EntityType::class, [
-                "class" => Projet::class,
-                "choice_label" => "id",
-            ])
-            ->add("demande", EntityType::class, [
-                "class" => DemandeClient::class,
-                "choice_label" => "id",
-            ]);
+            ->add("contenu");
     }
 
     public function configureOptions(OptionsResolver $resolver): void
