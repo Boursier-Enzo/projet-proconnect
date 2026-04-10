@@ -84,6 +84,7 @@
 </div>
 
 <script>
+    // switch entre connection et inscription
     document.querySelectorAll('.auth-switch').forEach(button => {
         button.addEventListener('click', () => {
             document.querySelectorAll('.auth-switch').forEach(btn => btn.classList.remove('active'));

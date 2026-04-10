@@ -1,23 +1,28 @@
 <?php
 session_start();
 
+// fonction pour nettoyer une chaine de caractère
 function cleanString($value) : string {
     return htmlspecialchars(trim($value));
 }
 
+// inclusion du scipt avec toutes les fonctions pour intéragir avec la BDD
 include_once "bdd/functions.php";
 
 $notification = NULL;
 
 $account = isset($_SESSION["mail"]) ? $_SESSION["mail"] : FALSE;
 
+// si l'utilisateur à rempli un formulaire...
 if (isset($_POST["origin"])){
     foreach ($_POST as $key => $value) {
+        // nettois les chaines de carctères
         if (is_string($value)) {
             $_POST[$key] = cleanString($value);
         }
     }
     if ($_POST["origin"] == "demand") {
+        // envoie d'une demande
         $clientData = search_data("user",["id"],["email"=>$account]);
         $created = create_data("demande_client",[
             "client_id"=>$clientData["id"],
@@ -33,6 +38,7 @@ if (isset($_POST["origin"])){
             $notification = "Une erreur est survenue lors de l'envois de votre demande, veillez réessayer";
         }
     } elseif ($_POST["origin"] == "signIn") {
+        // connection à un compte
         $connected = search_data("user",["password"],["email"=>$_POST["email"]]);
 
         if ($connected && $connected["password"] === $_POST["password"]) {
@@ -47,6 +53,7 @@ if (isset($_POST["origin"])){
         }
 
     } elseif ($_POST["origin"] == "signUp") {
+        // création d'un compte
         $created = create_data("user",[
             "prenom"=>$_POST["firstName"],
             "nom"=>$_POST["lastName"],
@@ -59,12 +66,16 @@ if (isset($_POST["origin"])){
 
         if ($created) {
             $_SESSION["mail"] = $_POST["email"];
+            if (isset($_POST["remember"])) {
+                setcookie("email",$_POST["email"],time()+34560000);
+            }
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit;
         } else {
             $notification = "Une erreur est survenue lors de l'envois de votre inscription, veillez réessayer";
         }
     } elseif ($_POST["origin"] == "signOut") {
+        // déconnection
         unset($_SESSION["mail"]);
         if (isset($_COOKIE["mail"])) { unset($_COOKIE["mail"]);}
         header('Location: ' . $_SERVER['PHP_SELF']);
@@ -72,6 +83,7 @@ if (isset($_POST["origin"])){
     }
 }
 
+// la "page" du site (index.php/page par exemple)
 $requestUri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $page = trim($requestUri, "/");
 $pageExists = file_exists("pages/$page.php");
@@ -101,7 +113,6 @@ $pageExists = file_exists("pages/$page.php");
                     <h3>ProConnect</h3>
                     <p>Solutions de gestion professionnelles</p>
                 </div>
-                <!-- ajout d'un lien vers les conditions d'utilisation -->
                 <a href="user_notice" class="footer-link">Conditions d'utilisation</a>
                 <p class="footer-copyright">© 2026 ProConnect</p>
             </div>
