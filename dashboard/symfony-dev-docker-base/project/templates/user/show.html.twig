@@ -1,74 +1,138 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User{% endblock %}
+{% block title %}{{ user.nom }} {{ user.prenom }} - ProConnect{% endblock %}
 
 {% block body %}
-    <h1>User</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <th>Roles</th>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-            </tr>
-            <tr>
-                <th>Password</th>
-                <td>{{ user.password }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ user.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ user.prenom }}</td>
-            </tr>
-            <tr>
-                <th>Telephone</th>
-                <td>{{ user.telephone }}</td>
-            </tr>
-            <tr>
-                <th>NumeroOrdre</th>
-                <td>{{ user.numeroOrdre }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ user.description }}</td>
-            </tr>
-            <tr>
-                <th>Horaires</th>
-                <td>{{ user.horaires }}</td>
-            </tr>
-            <tr>
-                <th>Specialites</th>
-                <td>{{ user.specialites }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>IsVerified</th>
-                <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div style="max-width: 800px; margin: 0 auto;">
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+        {# ── Retour ── #}
+        <div class="mb-4">
+            <a href="{{ path('app_user_index') }}" class="back-link">← Retour à la liste</a>
+        </div>
 
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+        {# ── Card principale ── #}
+        <div class="form-card">
 
-    {{ include('user/_delete_form.html.twig') }}
+            {# Header #}
+            <div class="card-head" style="background-color: #3D2B1A; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="card-title h4 mb-1">{{ user.nom }} {{ user.prenom }}</h1>
+                    <p class="card-subtitle mb-0">
+                        {% if 'ROLE_ADMIN' in user.roles %}
+                            🔧 Administrateur
+                        {% elseif 'ROLE_ARCHITECTE' in user.roles %}
+                            🏛 Architecte
+                        {% else %}
+                            👤 Client
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    {% if user.isVerified %}
+                        <span class="badge" style="background-color: #d1e7dd; color: #0a3622; font-size: 13px; padding: 6px 14px;">✓ Vérifié</span>
+                    {% else %}
+                        <span class="badge" style="background-color: #f8d7da; color: #58151c; font-size: 13px; padding: 6px 14px;">✗ Non vérifié</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Corps #}
+            <div class="card-body p-4 bg-white">
+
+                {# Infos essentielles #}
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Email</span>
+                            <span class="user-info-value">{{ user.email }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Téléphone</span>
+                            <span class="user-info-value">{{ user.telephone ?: '—' }}</span>
+                        </div>
+                    </div>
+                    {% if user.numeroOrdre %}
+                    <div class="col-md-6">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Numéro d'ordre</span>
+                            <span class="user-info-value">{{ user.numeroOrdre }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.specialites %}
+                    <div class="col-md-6">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Spécialités</span>
+                            <span class="user-info-value">{{ user.specialites }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.horaires %}
+                    <div class="col-md-6">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Horaires</span>
+                            <span class="user-info-value">{{ user.horaires }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if user.description %}
+                    <div class="col-12">
+                        <div class="user-info-block">
+                            <span class="user-info-label">Description</span>
+                            <span class="user-info-value">{{ user.description }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# Infos système (repliables) #}
+                <div class="border-top pt-3">
+                    <button class="btn btn-sm btn-light w-100 text-start" style="color: #7A7875; font-size: 13px;" onclick="toggleMeta()">
+                        ▾ Informations système
+                    </button>
+                    <div id="meta-block" style="display: none;" class="mt-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="user-info-block">
+                                    <span class="user-info-label">Créé le</span>
+                                    <span class="user-info-value">{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '—' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="user-info-block">
+                                    <span class="user-info-label">Modifié le</span>
+                                    <span class="user-info-value">{{ user.updatedAt ? user.updatedAt|date('d/m/Y H:i') : '—' }}</span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="user-info-block">
+                                    <span class="user-info-label">Rôles</span>
+                                    <span class="user-info-value">{{ user.roles|join(', ') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Actions #}
+                <div class="form-actions">
+                    <a href="{{ path('app_user_index') }}" class="btn-cancel">Retour</a>
+                    <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn-submit" style="text-decoration: none; display: inline-block;">Modifier</a>
+                    {{ include('user/_delete_form.html.twig') }}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMeta() {
+            const block = document.getElementById('meta-block');
+            block.style.display = block.style.display === 'none' ? '' : 'none';
+        }
+    </script>
+
 {% endblock %}

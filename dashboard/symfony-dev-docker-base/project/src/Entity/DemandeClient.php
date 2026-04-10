@@ -25,8 +25,8 @@ class DemandeClient
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $typePrestation = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $creneauSouhaite = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $creneauSouhaite = null;
 
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
@@ -49,6 +49,15 @@ class DemandeClient
     public function __construct()
     {
         $this->documents = new ArrayCollection();
+        
+        // Initialisation des dates de création et de mise à jour
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+        
+        // Définir un statut par défaut si aucun n'est fourni
+        if ($this->statut === null) {
+            $this->statut = 'non_accepte';
+        }
     }
 
     public function getId(): ?int
@@ -92,15 +101,14 @@ class DemandeClient
         return $this;
     }
 
-    public function getCreneauSouhaite(): ?string
+    public function getCreneauSouhaite(): ?\DateTimeImmutable
     {
         return $this->creneauSouhaite;
     }
 
-    public function setCreneauSouhaite(?string $creneauSouhaite): static
+    public function setCreneauSouhaite(?\DateTimeImmutable $creneauSouhaite): self
     {
         $this->creneauSouhaite = $creneauSouhaite;
-
         return $this;
     }
 

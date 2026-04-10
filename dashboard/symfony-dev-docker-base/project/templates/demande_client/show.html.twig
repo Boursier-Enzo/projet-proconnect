@@ -1,56 +1,84 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}DemandeClient{% endblock %}
+{% block title %}Demande #{{ demande_client.id }} – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>DemandeClient</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ demande_client.id }}</td>
-            </tr>
-            <tr>
-                <th>Objet</th>
-                <td>{{ demande_client.objet }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ demande_client.description }}</td>
-            </tr>
-            <tr>
-                <th>TypePrestation</th>
-                <td>{{ demande_client.typePrestation }}</td>
-            </tr>
-            <tr>
-                <th>CreneauSouhaite</th>
-                <td>{{ demande_client.creneauSouhaite }}</td>
-            </tr>
-            <tr>
-                <th>Statut</th>
-                <td>{{ demande_client.statut }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ demande_client.createdAt ? demande_client.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ demande_client.updatedAt ? demande_client.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <a href="{{ path('app_demande_client_index') }}" class="back-link">← Retour aux demandes</a>
 
-    <a href="{{ path('app_demande_client_index') }}">back to list</a>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header">
+        <div>
+            <h1>{{ demande_client.objet }}</h1>
+            <p>Demande client #{{ demande_client.id }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            {% if demande_client.statut != 'accepte' %}
+            <form method="post" action="{{ path('app_demande_client_accepter', {'id': demande_client.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande_client.id) }}">
+                <button type="submit" class="btn" style="background-color: #198754; color: #fff; font-weight: 600; border-radius: 8px; padding: 8px 20px;">
+                    ✅ Accepter la demande
+                </button>
+            </form>
+            {% else %}
+                <span class="statut-badge statut-termine" style="padding: 8px 16px; font-size: 13px;">✓ Demande acceptée</span>
+            {% endif %}
 
-    <a href="{{ path('app_demande_client_edit', {'id': demande_client.id}) }}">edit</a>
+            {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+            <a href="{{ path('app_demande_client_edit', {'id': demande_client.id}) }}" class="btn btn-proconnect">
+                ✏️ Modifier
+            </a>
+            {% endif %}
+        </div>
+    </div>
 
-    <form method="post" action="{{ path('app_demande_client_accepter', {'id': demande_client.id}) }}" style="display:inline;">
-            <input type="hidden" name="_token" value="{{ csrf_token('accepter' ~ demande_client.id) }}">
-            <button type="submit">Accepter</button>
-    </form>
-    
+    {# ── Infos ── #}
+    <div class="proconnect-card p-4 mb-4">
+        <p class="section-title">Informations de la demande</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Objet</div>
+                <div class="info-value">{{ demande_client.objet }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Type de prestation</div>
+                <div class="info-value">{{ demande_client.typePrestation ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Créneau souhaité</div>
+                <div class="info-value">{{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y à H:i') : 'Non défini' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Statut</div>
+                <div class="info-value">
+                    <span class="statut-badge {{ demande_client.statut == 'accepte' ? 'statut-termine' : 'statut-annule' }}">
+                        {{ demande_client.statut == 'accepte' ? '✓ Acceptée' : '✗ Non acceptée' }}
+                    </span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Créée le</div>
+                <div class="info-value">{{ demande_client.createdAt ? demande_client.createdAt|date('d/m/Y à H:i') : '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Mise à jour le</div>
+                <div class="info-value">{{ demande_client.updatedAt ? demande_client.updatedAt|date('d/m/Y à H:i') : '—' }}</div>
+            </div>
+        </div>
 
-    {{ include('demande_client/_delete_form.html.twig') }}
+        {% if demande_client.description %}
+            <p class="section-title">Description</p>
+            <p style="color: #3D2B1A; font-size: 14px; line-height: 1.7;">{{ demande_client.description }}</p>
+        {% endif %}
+    </div>
+
+    {# ── Danger zone ── #}
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="danger-zone">
+        <h6>⚠️ Zone dangereuse</h6>
+        <p>La suppression de cette demande est irréversible.</p>
+        {{ include('demande_client/_delete_form.html.twig') }}
+    </div>
+    {% endif %}
+
 {% endblock %}

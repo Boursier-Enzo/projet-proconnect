@@ -1,11 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New DemandeClient{% endblock %}
+{% block title %}Nouvelle Demande - ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Create new DemandeClient</h1>
+    <div class="new-page">
+        <div class="mb-4">
+            <a href="{{ path('app_demande_client_index') }}" class="back-link">
+                ← Retour au registre
+            </a>
+        </div>
 
-    {{ include('demande_client/_form.html.twig') }}
+        <div class="form-card">
+            <div class="card-head">
+                <h1 class="card-title h4 mb-1">Créer une nouvelle demande</h1>
+                <p class="card-subtitle">Remplissez les informations pour enregistrer un nouveau dossier métier.</p>
+            </div>
 
-    <a href="{{ path('app_demande_client_index') }}">back to list</a>
+            <div class="card-body p-4 bg-white">
+                {{ include('demande_client/_form.html.twig') }}
+            </div>
+        </div>
+    </div>
 {% endblock %}
