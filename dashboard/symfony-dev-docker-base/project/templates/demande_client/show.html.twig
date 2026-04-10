@@ -32,49 +32,106 @@
         </div>
     </div>
 
-    {# ── Infos ── #}
-    <div class="proconnect-card p-4 mb-4">
-        <p class="section-title">Informations de la demande</p>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Objet</div>
-                <div class="info-value">{{ demande_client.objet }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Type de prestation</div>
-                <div class="info-value">{{ demande_client.typePrestation ?? '—' }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Créneau souhaité</div>
-                <div class="info-value">{{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y à H:i') : 'Non défini' }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Statut</div>
-                <div class="info-value">
-                    <span class="statut-badge {{ demande_client.statut == 'accepte' ? 'statut-termine' : 'statut-annule' }}">
-                        {{ demande_client.statut == 'accepte' ? '✓ Acceptée' : '✗ Non acceptée' }}
-                    </span>
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Créée le</div>
-                <div class="info-value">{{ demande_client.createdAt ? demande_client.createdAt|date('d/m/Y à H:i') : '—' }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Mise à jour le</div>
-                <div class="info-value">{{ demande_client.updatedAt ? demande_client.updatedAt|date('d/m/Y à H:i') : '—' }}</div>
+    <div class="row g-4">
+
+        {# ── Colonne gauche : infos client ── #}
+        <div class="col-lg-4">
+            <div class="proconnect-card p-4 h-100">
+                <p class="section-title">👤 Client</p>
+                {% if demande_client.client %}
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="d-flex align-items-center justify-content-center flex-shrink-0"
+                            style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #A0722A, #3D2B1A); color: #fff; font-size: 18px; font-weight: 800;">
+                            {{ demande_client.client.prenom|slice(0,1)|upper }}{{ demande_client.client.nom|slice(0,1)|upper }}
+                        </div>
+                        <div>
+                            <div class="fw-bold" style="color: #3D2B1A;">
+                                {{ demande_client.client.prenom }} {{ demande_client.client.nom }}
+                            </div>
+                            <div class="text-muted" style="font-size: 12px;">Client</div>
+                        </div>
+                    </div>
+
+                    <div class="info-item mb-2">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">
+                            <a href="mailto:{{ demande_client.client.email }}" style="color: #A0722A; text-decoration: none;">
+                                {{ demande_client.client.email }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="info-item mb-2">
+                        <div class="info-label">Téléphone</div>
+                        <div class="info-value">{{ demande_client.client.telephone ?? '—' }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Membre depuis</div>
+                        <div class="info-value">{{ demande_client.client.createdAt ? demande_client.client.createdAt|date('d/m/Y') : '—' }}</div>
+                    </div>
+
+                    <div class="mt-3 pt-3 border-top">
+                        <a href="{{ path('app_user_show', {'id': demande_client.client.id}) }}"
+                           class="btn btn-light w-100" style="font-size: 13px; font-weight: 600; color: #3D2B1A;">
+                            Voir le profil complet →
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-muted" style="font-size: 14px; font-style: italic;">
+                        Aucun client associé à cette demande.
+                    </div>
+                {% endif %}
             </div>
         </div>
 
-        {% if demande_client.description %}
-            <p class="section-title">Description</p>
-            <p style="color: #3D2B1A; font-size: 14px; line-height: 1.7;">{{ demande_client.description }}</p>
-        {% endif %}
+        {# ── Colonne droite : infos demande ── #}
+        <div class="col-lg-8">
+            <div class="proconnect-card p-4">
+                <p class="section-title">Informations de la demande</p>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Objet</div>
+                        <div class="info-value">{{ demande_client.objet }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Type de prestation</div>
+                        <div class="info-value">{{ demande_client.typePrestation ?? '—' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Créneau souhaité</div>
+                        <div class="info-value">{{ demande_client.creneauSouhaite ? demande_client.creneauSouhaite|date('d/m/Y à H:i') : 'Non défini' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Statut</div>
+                        <div class="info-value">
+                            <span class="statut-badge {{ demande_client.statut == 'accepte' ? 'statut-termine' : 'statut-annule' }}">
+                                {{ demande_client.statut == 'accepte' ? '✓ Acceptée' : '✗ Non acceptée' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Créée le</div>
+                        <div class="info-value">{{ demande_client.createdAt ? demande_client.createdAt|date('d/m/Y à H:i') : '—' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Mise à jour le</div>
+                        <div class="info-value">{{ demande_client.updatedAt ? demande_client.updatedAt|date('d/m/Y à H:i') : '—' }}</div>
+                    </div>
+                </div>
+
+                {% if demande_client.description %}
+                    <p class="section-title">Description</p>
+                    <p style="color: #3D2B1A; font-size: 14px; line-height: 1.7;">{{ demande_client.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 
     {# ── Danger zone ── #}
     {% if is_granted('ROLE_ADMIN') %}
-    <div class="danger-zone">
+    <div class="danger-zone mt-4">
         <h6>⚠️ Zone dangereuse</h6>
         <p>La suppression de cette demande est irréversible.</p>
         {{ include('demande_client/_delete_form.html.twig') }}

@@ -1,54 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Document{% endblock %}
+{% block title %}{{ document.titre }} – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Document</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ document.id }}</td>
-            </tr>
-            <tr>
-                <th>Uuid</th>
-                <td>{{ document.uuid }}</td>
-            </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ document.titre }}</td>
-            </tr>
-            <tr>
-                <th>TypeDocument</th>
-                <td>{{ document.typeDocument }}</td>
-            </tr>
-            <tr>
-                <th>FichierPath</th>
-                <td>{{ document.fichierPath }}</td>
-            </tr>
-            <tr>
-                <th>CodeAcces</th>
-                <td>{{ document.codeAcces }}</td>
-            </tr>
-            <tr>
-                <th>Contenu</th>
-                <td>{{ document.contenu }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ document.createdAt ? document.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ document.updatedAt ? document.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <a href="{{ path('app_document_index') }}" class="back-link">← Retour aux documents</a>
 
-    <a href="{{ path('app_document_index') }}">back to list</a>
+    <div class="proconnect-page-header">
+        <div>
+            <h1>{{ document.titre }}</h1>
+            <p>Détails du document</p>
+        </div>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+        <a href="{{ path('app_document_edit', {'id': document.id}) }}" class="btn btn-proconnect">
+            ✏️ Modifier
+        </a>
+        {% endif %}
+    </div>
 
-    <a href="{{ path('app_document_edit', {'id': document.id}) }}">edit</a>
+    <div class="proconnect-card p-4 mb-4">
+        <p class="section-title">Informations générales</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Titre</div>
+                <div class="info-value">{{ document.titre }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Type de document</div>
+                <div class="info-value">{{ document.typeDocument ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Code d'accès</div>
+                <div class="info-value" style="font-family: monospace;">{{ document.codeAcces ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">UUID</div>
+                <div class="info-value" style="font-size: 12px; font-family: monospace;">{{ document.uuid ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Créé le</div>
+                <div class="info-value">{{ document.createdAt ? document.createdAt|date('d/m/Y à H:i') : '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Mis à jour le</div>
+                <div class="info-value">{{ document.updatedAt ? document.updatedAt|date('d/m/Y à H:i') : '—' }}</div>
+            </div>
+        </div>
 
-    {{ include('document/_delete_form.html.twig') }}
+        {% if document.contenu %}
+            <p class="section-title">Contenu</p>
+            <p style="color: #3D2B1A; font-size: 14px; line-height: 1.7;">{{ document.contenu }}</p>
+        {% endif %}
+
+        {% if document.fichierPath %}
+            <p class="section-title">Fichier joint</p>
+            <a href="{{ asset(document.fichierPath) }}" target="_blank" class="btn btn-proconnect">
+                📎 Télécharger / Voir le fichier
+            </a>
+        {% endif %}
+    </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="danger-zone mt-4">
+        <h6>⚠️ Zone dangereuse</h6>
+        <p>La suppression de ce document est irréversible.</p>
+        {{ include('document/_delete_form.html.twig') }}
+    </div>
+    {% endif %}
+
 {% endblock %}

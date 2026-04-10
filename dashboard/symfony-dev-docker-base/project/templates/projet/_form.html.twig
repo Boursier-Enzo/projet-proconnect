@@ -1,8 +1,7 @@
 {{ form_start(form) }}
 
-    {# Erreurs globales #}
     {% if form.vars.errors|length > 0 %}
-    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius: 10px;">
+    <div class="alert alert-danger border-0 mb-4" style="border-radius: 10px;">
         {{ form_errors(form) }}
     </div>
     {% endif %}
@@ -17,7 +16,7 @@
 
         <div class="col-md-4">
             <label class="proconnect-label">Type de projet</label>
-            {{ form_widget(form.typeProjet, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.typeProjet, {'attr': {'class': 'form-select'}}) }}
             {{ form_errors(form.typeProjet) }}
         </div>
 
@@ -51,6 +50,12 @@
             {{ form_errors(form.adresseChantier) }}
         </div>
 
+        <div class="col-md-12">
+            <label class="proconnect-label">Architecte responsable</label>
+            {{ form_widget(form.architecte, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.architecte) }}
+        </div>
+
         <div class="col-12">
             <label class="proconnect-label">Description</label>
             {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Décrivez le projet…'}}) }}
@@ -59,7 +64,6 @@
 
     </div>
 
-    {# Actions #}
     <div class="mt-5 pt-4 border-top d-flex justify-content-end gap-2">
         <a href="{{ path('app_projet_index') }}" class="btn btn-light px-4" style="font-weight: 600; color: #7A7875;">
             Annuler

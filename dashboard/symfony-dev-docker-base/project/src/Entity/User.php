@@ -29,15 +29,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -71,19 +65,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Projet>
      */
-    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: "architecte")]
+    #[ORM\OneToMany(targetEntity: Projet::class, mappedBy: 'architecte')]
     private Collection $projets;
 
     /**
      * @var Collection<int, DemandeClient>
+     * Demandes assignées à cet architecte
      */
-    #[ORM\OneToMany(targetEntity: DemandeClient::class, mappedBy: "architecte")]
+    #[ORM\OneToMany(targetEntity: DemandeClient::class, mappedBy: 'architecte')]
     private Collection $demandeClients;
+
+    /**
+     * @var Collection<int, DemandeClient>
+     * Demandes envoyées par ce client
+     */
+    #[ORM\OneToMany(targetEntity: DemandeClient::class, mappedBy: 'client')]
+    private Collection $demandesEnvoyees;
 
     /**
      * @var Collection<int, Intervention>
      */
-    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: "architecte")]
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'architecte')]
     private Collection $interventions;
 
     #[ORM\Column]
@@ -91,11 +93,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-        $this->projets = new ArrayCollection();
-        $this->demandeClients = new ArrayCollection();
-        $this->interventions = new ArrayCollection();
+        $this->createdAt       = new \DateTimeImmutable();
+        $this->updatedAt       = new \DateTimeImmutable();
+        $this->projets         = new ArrayCollection();
+        $this->demandeClients  = new ArrayCollection();
+        $this->demandesEnvoyees = new ArrayCollection();
+        $this->interventions   = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -111,45 +114,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = "ROLE_USER";
-
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -158,21 +143,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
-     */
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0" . self::class . "\0password"] = hash(
-            "crc32c",
-            $this->password,
-        );
-
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
         return $data;
     }
 
@@ -184,7 +161,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -196,7 +172,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -208,7 +183,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -220,7 +194,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNumeroOrdre(string $numeroOrdre): static
     {
         $this->numeroOrdre = $numeroOrdre;
-
         return $this;
     }
 
@@ -232,7 +205,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -244,7 +216,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHoraires(?string $horaires): static
     {
         $this->horaires = $horaires;
-
         return $this;
     }
 
@@ -256,7 +227,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setSpecialites(?string $specialites): static
     {
         $this->specialites = $specialites;
-
         return $this;
     }
 
@@ -268,7 +238,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -280,13 +249,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Projet>
-     */
+    // ── Projets ──
+
+    /** @return Collection<int, Projet> */
     public function getProjets(): Collection
     {
         return $this->projets;
@@ -298,25 +266,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->projets->add($projet);
             $projet->setArchitecte($this);
         }
-
         return $this;
     }
 
     public function removeProjet(Projet $projet): static
     {
         if ($this->projets->removeElement($projet)) {
-            // set the owning side to null (unless already changed)
             if ($projet->getArchitecte() === $this) {
                 $projet->setArchitecte(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, DemandeClient>
-     */
+    // ── Demandes assignées (côté architecte) ──
+
+    /** @return Collection<int, DemandeClient> */
     public function getDemandeClients(): Collection
     {
         return $this->demandeClients;
@@ -328,25 +293,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->demandeClients->add($demandeClient);
             $demandeClient->setArchitecte($this);
         }
-
         return $this;
     }
 
     public function removeDemandeClient(DemandeClient $demandeClient): static
     {
         if ($this->demandeClients->removeElement($demandeClient)) {
-            // set the owning side to null (unless already changed)
             if ($demandeClient->getArchitecte() === $this) {
                 $demandeClient->setArchitecte(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Intervention>
-     */
+    // ── Demandes envoyées (côté client) ──
+
+    /** @return Collection<int, DemandeClient> */
+    public function getDemandesEnvoyees(): Collection
+    {
+        return $this->demandesEnvoyees;
+    }
+
+    public function addDemandeEnvoyee(DemandeClient $demande): static
+    {
+        if (!$this->demandesEnvoyees->contains($demande)) {
+            $this->demandesEnvoyees->add($demande);
+            $demande->setClient($this);
+        }
+        return $this;
+    }
+
+    public function removeDemandeEnvoyee(DemandeClient $demande): static
+    {
+        if ($this->demandesEnvoyees->removeElement($demande)) {
+            if ($demande->getClient() === $this) {
+                $demande->setClient(null);
+            }
+        }
+        return $this;
+    }
+
+    // ── Interventions ──
+
+    /** @return Collection<int, Intervention> */
     public function getInterventions(): Collection
     {
         return $this->interventions;
@@ -358,19 +347,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->interventions->add($intervention);
             $intervention->setArchitecte($this);
         }
-
         return $this;
     }
 
     public function removeIntervention(Intervention $intervention): static
     {
         if ($this->interventions->removeElement($intervention)) {
-            // set the owning side to null (unless already changed)
             if ($intervention->getArchitecte() === $this) {
                 $intervention->setArchitecte(null);
             }
         }
-
         return $this;
     }
 
@@ -382,7 +368,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 }
