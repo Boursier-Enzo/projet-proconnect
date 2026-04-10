@@ -1,134 +1,212 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index{% endblock %}
+{% block title %}Clients / Usagers - ProConnect{% endblock %}
 
 {% block body %}
 
-    
-    <h1>Client</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th><th>Email</th><th>Roles</th><th>Password</th>
-                <th>Nom</th><th>Prenom</th><th>Telephone</th><th>NumeroOrdre</th>
-                <th>Description</th><th>Horaires</th><th>Specialites</th>
-                <th>CreatedAt</th><th>UpdatedAt</th><th>IsVerified</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            {% if 'ROLE_USER' in user.roles and 'ROLE_ARCHITECTE' not in user.roles and 'ROLE_ADMIN' not in user.roles %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                    <td>{{ user.password }}</td>
-                    <td>{{ user.nom }}</td>
-                    <td>{{ user.prenom }}</td>
-                    <td>{{ user.telephone }}</td>
-                    <td>{{ user.numeroOrdre }}</td>
-                    <td>{{ user.description }}</td>
-                    <td>{{ user.horaires }}</td>
-                    <td>{{ user.specialites }}</td>
-                    <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-                    <td>
-                        <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                        <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% endif %}
-        {% else %}
-            <tr><td colspan="15">no records found</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# ── En-tête ── #}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 style="color: #3D2B1A; font-weight: 800; font-size: 24px; margin: 0;">Clients / Usagers</h1>
+            <p class="text-muted small">Gérez l'ensemble des utilisateurs de la plateforme.</p>
+        </div>
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_user_new') }}" class="btn" style="background-color: #A0722A; color: white; font-weight: 600; border-radius: 8px;">
+            + Nouvel utilisateur
+        </a>
+        {% endif %}
+    </div>
 
-    
-    <h1>Architecte</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th><th>Email</th><th>Roles</th><th>Password</th>
-                <th>Nom</th><th>Prenom</th><th>Telephone</th><th>NumeroOrdre</th>
-                <th>Description</th><th>Horaires</th><th>Specialites</th>
-                <th>CreatedAt</th><th>UpdatedAt</th><th>IsVerified</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            {% if 'ROLE_ARCHITECTE' in user.roles %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                    <td>{{ user.password }}</td>
-                    <td>{{ user.nom }}</td>
-                    <td>{{ user.prenom }}</td>
-                    <td>{{ user.telephone }}</td>
-                    <td>{{ user.numeroOrdre }}</td>
-                    <td>{{ user.description }}</td>
-                    <td>{{ user.horaires }}</td>
-                    <td>{{ user.specialites }}</td>
-                    <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-                    <td>
-                        <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                        <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% endif %}
-        {% else %}
-            <tr><td colspan="15">no records found</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# ── Barre de recherche globale ── #}
+    <div class="mb-4">
+        <input
+            type="text"
+            id="search-input"
+            class="form-control"
+            placeholder="🔍  Rechercher un utilisateur (nom, prénom, email…)"
+            style="border-radius: 10px; border: 1px solid #E0DDD8; padding: 12px 16px; font-size: 14px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04);"
+            oninput="filterUsers()"
+        >
+    </div>
 
-    
-    <h1>Admin</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th><th>Email</th><th>Roles</th><th>Password</th>
-                <th>Nom</th><th>Prenom</th><th>Telephone</th><th>NumeroOrdre</th>
-                <th>Description</th><th>Horaires</th><th>Specialites</th>
-                <th>CreatedAt</th><th>UpdatedAt</th><th>IsVerified</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            {% if 'ROLE_ADMIN' in user.roles %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                    <td>{{ user.password }}</td>
-                    <td>{{ user.nom }}</td>
-                    <td>{{ user.prenom }}</td>
-                    <td>{{ user.telephone }}</td>
-                    <td>{{ user.numeroOrdre }}</td>
-                    <td>{{ user.description }}</td>
-                    <td>{{ user.horaires }}</td>
-                    <td>{{ user.specialites }}</td>
-                    <td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                    <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-                    <td>
-                        <a href="{{ path('app_user_show', {'id': user.id}) }}">show</a>
-                        <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% endif %}
-        {% else %}
-            <tr><td colspan="15">no records found</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {# ── Section Clients ── #}
+    <div class="user-section mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="toggleSection('clients')">
+            <h2 class="user-section-title">
+                <span class="section-icon">👤</span> Clients
+                <span id="clients-count" class="badge ms-2" style="background-color: #E8D5B7; color: #3D2B1A; font-size: 12px;"></span>
+            </h2>
+            <span id="clients-chevron" style="color: #A0722A; font-size: 18px; transition: 0.2s;">▾</span>
+        </div>
+        <div id="clients-table">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 user-table" data-role="client">
+                        <thead style="background-color: #F8F9FA;">
+                            <tr style="color: #7A7875; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <th class="ps-4 py-3">Nom / Prénom</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Téléphone</th>
+                                <th class="py-3">Vérifié</th>
+                                <th class="py-3 pe-4 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% set has_client = false %}
+                        {% for user in users %}
+                            {% if 'ROLE_USER' in user.roles and 'ROLE_ARCHITECTE' not in user.roles and 'ROLE_ADMIN' not in user.roles %}
+                                {% set has_client = true %}
+                                <tr class="user-row">
+                                    <td class="ps-4 py-3">
+                                        <div class="fw-bold" style="color: #3D2B1A;">{{ user.nom }} {{ user.prenom }}</div>
+                                    </td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.email }}</td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.telephone ?: '—' }}</td>
+                                    <td class="py-3">
+                                        {% if user.isVerified %}
+                                            <span class="badge" style="background-color: #d1e7dd; color: #0a3622; font-weight: 600;">Vérifié</span>
+                                        {% else %}
+                                            <span class="badge" style="background-color: #f8d7da; color: #58151c; font-weight: 600;">Non vérifié</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-4 py-3 text-end">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-light">Voir</a>
+                                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 0;">Modifier</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not has_client %}
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Aucun client trouvé.</td></tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_user_new') }}">Create new</a>
-    {% endif %}
+    {# ── Section Architectes ── #}
+    <div class="user-section mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="toggleSection('architectes')">
+            <h2 class="user-section-title">
+                <span class="section-icon">🏛</span> Architectes
+                <span id="architectes-count" class="badge ms-2" style="background-color: #E8D5B7; color: #3D2B1A; font-size: 12px;"></span>
+            </h2>
+            <span id="architectes-chevron" style="color: #A0722A; font-size: 18px; transition: 0.2s;">▾</span>
+        </div>
+        <div id="architectes-table">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 user-table" data-role="architecte">
+                        <thead style="background-color: #F8F9FA;">
+                            <tr style="color: #7A7875; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <th class="ps-4 py-3">Nom / Prénom</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Téléphone</th>
+                                <th class="py-3">Vérifié</th>
+                                <th class="py-3 pe-4 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% set has_architecte = false %}
+                        {% for user in users %}
+                            {% if 'ROLE_ARCHITECTE' in user.roles %}
+                                {% set has_architecte = true %}
+                                <tr class="user-row">
+                                    <td class="ps-4 py-3">
+                                        <div class="fw-bold" style="color: #3D2B1A;">{{ user.nom }} {{ user.prenom }}</div>
+                                        {% if user.specialites %}
+                                            <div class="text-muted" style="font-size: 12px;">{{ user.specialites }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.email }}</td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.telephone ?: '—' }}</td>
+                                    <td class="py-3">
+                                        {% if user.isVerified %}
+                                            <span class="badge" style="background-color: #d1e7dd; color: #0a3622; font-weight: 600;">Vérifié</span>
+                                        {% else %}
+                                            <span class="badge" style="background-color: #f8d7da; color: #58151c; font-weight: 600;">Non vérifié</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-4 py-3 text-end">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-light">Voir</a>
+                                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 0;">Modifier</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not has_architecte %}
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Aucun architecte trouvé.</td></tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ── Section Admins ── #}
+    <div class="user-section mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2" style="cursor: pointer;" onclick="toggleSection('admins')">
+            <h2 class="user-section-title">
+                <span class="section-icon">🔧</span> Admins
+                <span id="admins-count" class="badge ms-2" style="background-color: #E8D5B7; color: #3D2B1A; font-size: 12px;"></span>
+            </h2>
+            <span id="admins-chevron" style="color: #A0722A; font-size: 18px; transition: 0.2s;">▾</span>
+        </div>
+        <div id="admins-table">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0 user-table" data-role="admin">
+                        <thead style="background-color: #F8F9FA;">
+                            <tr style="color: #7A7875; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <th class="ps-4 py-3">Nom / Prénom</th>
+                                <th class="py-3">Email</th>
+                                <th class="py-3">Téléphone</th>
+                                <th class="py-3">Vérifié</th>
+                                <th class="py-3 pe-4 text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% set has_admin = false %}
+                        {% for user in users %}
+                            {% if 'ROLE_ADMIN' in user.roles %}
+                                {% set has_admin = true %}
+                                <tr class="user-row">
+                                    <td class="ps-4 py-3">
+                                        <div class="fw-bold" style="color: #3D2B1A;">{{ user.nom }} {{ user.prenom }}</div>
+                                    </td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.email }}</td>
+                                    <td class="py-3 text-muted" style="font-size: 14px;">{{ user.telephone ?: '—' }}</td>
+                                    <td class="py-3">
+                                        {% if user.isVerified %}
+                                            <span class="badge" style="background-color: #d1e7dd; color: #0a3622; font-weight: 600;">Vérifié</span>
+                                        {% else %}
+                                            <span class="badge" style="background-color: #f8d7da; color: #58151c; font-weight: 600;">Non vérifié</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-4 py-3 text-end">
+                                        <div class="btn-group shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                                            <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-light">Voir</a>
+                                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 0;">Modifier</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not has_admin %}
+                            <tr><td colspan="5" class="text-center py-4 text-muted">Aucun admin trouvé.</td></tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
