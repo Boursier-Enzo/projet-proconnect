@@ -9,8 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\ExpressionLanguage\Expression;
 
-#[IsGranted('ROLE_ARCHITECTE')]
+#[IsGranted(new Expression('is_granted("ROLE_ADMIN") or is_granted("ROLE_ARCHITECTE")'))]
 #[Route('/profil')]
 class ProfileController extends AbstractController
 {
