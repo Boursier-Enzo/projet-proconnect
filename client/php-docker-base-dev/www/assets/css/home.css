@@ -1,0 +1,291 @@
+body {
+    background-color: var(--color-bg-alt);
+}
+
+/* ================================
+   HERO SECTION
+   ================================ */
+.hero {
+    background: linear-gradient(135deg, var(--color-main) 0%, var(--color-secondary) 100%);
+    padding: 6rem 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    &::before {
+        content: "";
+        position: absolute;
+        right: -100px;
+        bottom: -100px;
+        width: 400px;
+        height: 400px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin: 0 0 1.5rem 0;
+        line-height: 1.2;
+        color: white;
+    }
+
+    p {
+        font-size: 16px;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        max-width: 500px;
+    }
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+}
+
+.hero-tag {
+    display: inline-block;
+    background-color: rgba(160, 114, 42, 0.3);
+    color: var(--color-highlight);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* ================================
+   SERVICES SECTION
+   ================================ */
+.services {
+    padding: 4rem 2rem;
+    h2 {
+        text-align: center;
+        color: var(--color-text);
+        margin-bottom: 3rem;
+        font-size: 28px;
+    }
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.service-card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid var(--color-borders);
+    &:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        transform: translateY(-4px);
+    }
+    h3 {
+        color: var(--color-text);
+        margin: 0 0 0.8rem 0;
+        font-size: 18px;
+    }
+    p {
+        color: var(--color-label);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.service-icon {
+    width: 48px;
+    height: 48px;
+    user-select: none;
+    background-color: var(--color-bg-card);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.service-link {
+    color: var(--color-link);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.3s ease;
+    :hover {
+        color: var(--color-hover);
+    }
+}
+
+/* ================================
+   CONTACT FORM SECTION
+   ================================ */
+.contact-section {
+    padding: 4rem 2rem;
+    background-color: var(--color-bg-alt);
+
+    h2 {
+        color: var(--color-text);
+        margin: 0 0 0.5rem 0;
+        font-size: 28px;
+    }
+
+    & > p {
+        color: var(--color-label);
+        margin: 0 0 2rem 0;
+        font-size: 14px;
+    }
+}
+
+.contact-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px 40px;
+    background-color: white;
+    border-radius: 3%;
+}
+
+.contact-form {
+    margin-top: 2rem;
+    button {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
+
+.download-section {
+    padding: 4rem 2rem;
+}
+
+.download-container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border: 1px solid rgba(33, 33, 33, 0.08);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+}
+
+.download-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h2 {
+        margin: 0.5rem 0 0.5rem;
+        font-size: 32px;
+        color: var(--color-text);
+    }
+
+    p {
+        margin: 0;
+        color: var(--color-label);
+        font-size: 15px;
+    }
+}
+
+.section-label {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    background-color: rgba(63, 81, 181, 0.1);
+    color: var(--color-main);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.download-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.75rem;
+
+    input[type="text"] {
+        width: 90%;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--color-borders);
+        border-radius: 12px;
+        background-color: white;
+        color: var(--color-text);
+        font-size: 15px;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--color-main);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+        }
+    }
+}
+
+.file-info-card {
+    border: 1px solid rgba(33, 33, 33, 0.08);
+    border-radius: 20px;
+    padding: 1.75rem;
+    background-color: #ffffff;
+
+    &.file-info-empty {
+        background-color: rgba(244, 67, 54, 0.05);
+        border-color: rgba(244, 67, 54, 0.15);
+        color: var(--color-error);
+    }
+
+    h3 {
+        margin: 0 0 0.75rem;
+        color: var(--color-text);
+        font-size: 22px;
+    }
+
+    p {
+        margin: 0.35rem 0;
+        color: var(--color-label);
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    .btn-download {
+        display: inline-flex;
+        margin-top: 1.25rem;
+        padding: 0.95rem 1.6rem;
+        border-radius: 999px;
+        text-decoration: none;
+    }
+}
+
+.file-info-tag {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background-color: rgba(76, 175, 80, 0.12);
+    color: var(--color-success);
+    font-size: 13px;
+    font-weight: 700;
+}
