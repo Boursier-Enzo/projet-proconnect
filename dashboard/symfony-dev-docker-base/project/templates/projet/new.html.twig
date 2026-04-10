@@ -1,11 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Projet{% endblock %}
+{% block title %}Nouveau projet – ProConnect{% endblock %}
 
 {% block body %}
-    <h1>Create new Projet</h1>
 
-    {{ include('projet/_form.html.twig') }}
+    <a href="{{ path('app_projet_index') }}" class="back-link">← Retour aux projets</a>
 
-    <a href="{{ path('app_projet_index') }}">back to list</a>
+    <div class="proconnect-page-header">
+        <div>
+            <h1>✨ Nouveau projet</h1>
+            <p>Remplissez les informations pour créer un nouveau projet.</p>
+        </div>
+    </div>
+
+    <div class="proconnect-card p-4">
+        {{ include('projet/_form.html.twig') }}
+    </div>
+
 {% endblock %}

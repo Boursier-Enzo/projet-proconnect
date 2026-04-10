@@ -1,4 +1,72 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+    {# Erreurs globales #}
+    {% if form.vars.errors|length > 0 %}
+    <div class="alert alert-danger shadow-sm border-0 mb-4" style="border-radius: 10px;">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <div class="col-md-8">
+            <label class="proconnect-label">Titre</label>
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Rénovation appartement Paris 11e'}}) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Type de projet</label>
+            {{ form_widget(form.typeProjet, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.typeProjet) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Statut</label>
+            {{ form_widget(form.statut, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.statut) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Date de début</label>
+            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.dateDebut) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Date de fin prévue</label>
+            {{ form_widget(form.dateFinPrevue, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.dateFinPrevue) }}
+        </div>
+
+        <div class="col-md-4">
+            <label class="proconnect-label">Budget (€)</label>
+            {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+            {{ form_errors(form.budget) }}
+        </div>
+
+        <div class="col-md-8">
+            <label class="proconnect-label">Adresse chantier</label>
+            {{ form_widget(form.adresseChantier, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 12 rue de la Paix, 75001 Paris'}}) }}
+            {{ form_errors(form.adresseChantier) }}
+        </div>
+
+        <div class="col-12">
+            <label class="proconnect-label">Description</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Décrivez le projet…'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+    </div>
+
+    {# Actions #}
+    <div class="mt-5 pt-4 border-top d-flex justify-content-end gap-2">
+        <a href="{{ path('app_projet_index') }}" class="btn btn-light px-4" style="font-weight: 600; color: #7A7875;">
+            Annuler
+        </a>
+        <button type="submit" class="btn btn-proconnect px-5">
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+
 {{ form_end(form) }}

@@ -1,87 +1,118 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ projet.titre }}{% endblock %}
+{% block title %}{{ projet.titre }} – ProConnect{% endblock %}
 
 {% block body %}
 
-<a href="{{ path('app_projet_index') }}">← Retour à la liste</a>
+    {# ── Retour ── #}
+    <a href="{{ path('app_projet_index') }}" class="back-link">← Retour aux projets</a>
 
-<h1>{{ projet.titre }}</h1>
+    {# ── En-tête ── #}
+    <div class="proconnect-page-header">
+        <div>
+            <h1>{{ projet.titre }}</h1>
+            <p>Détails du projet</p>
+        </div>
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ARCHITECTE') %}
+        <a href="{{ path('app_projet_edit', {'id': projet.id}) }}" class="btn btn-proconnect">
+            ✏️ Modifier
+        </a>
+        {% endif %}
+    </div>
 
-{# Infos du projet #}
-<table>
-    <tr>
-        <th>Statut</th>
-        <td>{{ projet.statut }}</td>
-    </tr>
-    <tr>
-        <th>Type</th>
-        <td>{{ projet.typeProjet ?? '—' }}</td>
-    </tr>
-    <tr>
-        <th>Date de début</th>
-        <td>{{ projet.dateDebut ? projet.dateDebut|date('d/m/Y') : '—' }}</td>
-    </tr>
-    <tr>
-        <th>Date de fin prévue</th>
-        <td>{{ projet.dateFinPrevue ? projet.dateFinPrevue|date('d/m/Y') : '—' }}</td>
-    </tr>
-    <tr>
-        <th>Budget</th>
-        <td>{{ projet.budget ? projet.budget|number_format(2, ',', ' ') ~ ' €' : '—' }}</td>
-    </tr>
-    <tr>
-        <th>Adresse chantier</th>
-        <td>{{ projet.adresseChantier ?? '—' }}</td>
-    </tr>
-    <tr>
-        <th>Architecte</th>
-        <td>{{ projet.architecte ? projet.architecte.email : '—' }}</td>
-    </tr>
-</table>
+    {# ── Infos principales ── #}
+    <div class="proconnect-card p-4 mb-4">
+        <p class="section-title">Informations générales</p>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Statut</div>
+                <div class="info-value">
+                    {% set s = projet.statut|lower|replace({' ': '_'}) %}
+                    <span class="statut-badge statut-{{ s in ['en_cours','termine','en_attente','annule'] ? s : 'default' }}">
+                        {{ projet.statut }}
+                    </span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Type de projet</div>
+                <div class="info-value">{{ projet.typeProjet ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Date de début</div>
+                <div class="info-value">{{ projet.dateDebut ? projet.dateDebut|date('d/m/Y') : '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Date de fin prévue</div>
+                <div class="info-value">{{ projet.dateFinPrevue ? projet.dateFinPrevue|date('d/m/Y') : '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Budget</div>
+                <div class="info-value">{{ projet.budget ? projet.budget|number_format(2, ',', ' ') ~ ' €' : '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Adresse chantier</div>
+                <div class="info-value">{{ projet.adresseChantier ?? '—' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Architecte</div>
+                <div class="info-value">{{ projet.architecte ? projet.architecte.nom ~ ' ' ~ projet.architecte.prenom : '—' }}</div>
+            </div>
+        </div>
 
-{% if projet.description %}
-    <h2>Description</h2>
-    <p>{{ projet.description }}</p>
-{% endif %}
+        {% if projet.description %}
+            <p class="section-title">Description</p>
+            <p style="color: #3D2B1A; font-size: 14px; line-height: 1.7;">{{ projet.description }}</p>
+        {% endif %}
+    </div>
 
-{# Documents rattachés #}
-<h2>Documents ({{ projet.documents|length }})</h2>
+    {# ── Documents ── #}
+    <div class="proconnect-card mb-4">
+        <div class="px-4 pt-4 pb-2 d-flex justify-content-between align-items-center">
+            <p class="section-title mb-0">Documents
+                <span class="badge ms-2" style="background-color: #E8D5B7; color: #3D2B1A; font-size: 12px;">{{ projet.documents|length }}</span>
+            </p>
+        </div>
+        {% if projet.documents is empty %}
+            <div class="text-center py-5 text-muted" style="font-size: 14px;">Aucun document rattaché à ce projet.</div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table proconnect-table mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 py-3">Titre</th>
+                            <th class="py-3">Type</th>
+                            <th class="py-3 pe-4">Fichier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in projet.documents %}
+                            <tr>
+                                <td class="ps-4 py-3 fw-bold" style="color: #3D2B1A;">{{ document.titre }}</td>
+                                <td class="py-3 text-muted" style="font-size: 14px;">{{ document.typeDocument ?? '—' }}</td>
+                                <td class="py-3 pe-4">
+                                    {% if document.fichierPath %}
+                                        <a href="{{ asset(document.fichierPath) }}" target="_blank" class="btn-proconnect btn" style="font-size: 13px; padding: 5px 12px;">
+                                            📄 Voir le fichier
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
 
-{% if projet.documents is empty %}
-    <p>Aucun document rattaché à ce projet.</p>
-{% else %}
-    <table>
-        <thead>
-            <tr>
-                <th>Titre</th>
-                <th>Type</th>
-                <th>Fichier</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for document in projet.documents %}
-                <tr>
-                    <td>{{ document.titre }}</td>
-                    <td>{{ document.typeDocument ?? '—' }}</td>
-                    <td>
-                        {% if document.fichierPath %}
-                            <a href="{{ asset(document.fichierPath) }}" target="_blank">
-                                Voir le fichier
-                            </a>
-                        {% else %}
-                            —
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
-
-{# Actions #}
-<a href="{{ path('app_projet_edit', { id: projet.id }) }}">Modifier</a>
-
-{{ include('projet/_delete_form.html.twig') }}
+    {# ── Danger zone (admin uniquement) ── #}
+    {% if is_granted('ROLE_ADMIN') %}
+    <div class="danger-zone mt-4">
+        <h6>⚠️ Zone dangereuse</h6>
+        <p>La suppression de ce projet est irréversible.</p>
+        {{ include('projet/_delete_form.html.twig') }}
+    </div>
+    {% endif %}
 
 {% endblock %}
